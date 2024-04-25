@@ -8,5 +8,8 @@ export default defineConfig({
     alias: {
       '@': "/src",
     }
-  }
+  },
+  build: {
+    outDir: '../backend/src/main/resources/static', // Output the dist folder to this location
+  },
 })
