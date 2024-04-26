@@ -4,15 +4,18 @@ services:
 
   postgres-db:
     image: postgres
+    restart: always
+    user: postgres
     volumes:
       - db-data:/var/lib/postgresql/data
-    
+
     environment:
+      PGUSER: postgres
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: secret
-      POSTGRES_USER: admin
     
     ports:
-      5432:5432
+      - 5432:5432
   
 volumes:
   db-data:

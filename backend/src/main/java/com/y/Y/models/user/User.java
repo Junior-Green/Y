@@ -1,23 +1,43 @@
 package com.y.Y.models.user;
 
-import org.springframework.context.annotation.Primary;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.List;
 
+@Entity
+@Table(name = "\"User\"")
 public class User {
 
 
+    @Id
+    @OneToOne()
     private String username;
+
+    @Column(nullable = false)
     private String firstName;
+
     private String middleName;
+
+    @Column(nullable = false)
     private String lastName;
+
+    @Column(nullable = false, unique = true)
     private String email;
+
+    @Column(nullable = false)
     private LocalDate dateOfBirth;
-    private LocalDateTime accountCreation;
+
+    @Column(nullable = false)
+    private LocalDate accountCreation;
+
+    @Column(unique = true)
     private String phoneNumber;
+
     private String gender;
+    private String bio;
+
+    public User() {}
 
     public User(String username,
                 String firstName,
@@ -25,9 +45,10 @@ public class User {
                 String lastName,
                 String email,
                 LocalDate dateOfBirth,
-                LocalDateTime accountCreation,
+                LocalDate accountCreation,
                 String phoneNumber,
-                String gender) {
+                String gender,
+                String bio) {
         this.username = username;
         this.firstName = firstName;
         this.middleName = middleName;
@@ -37,24 +58,7 @@ public class User {
         this.accountCreation = accountCreation;
         this.phoneNumber = phoneNumber;
         this.gender = gender;
-    }
-
-    public User(String firstName,
-                String middleName,
-                String lastName,
-                String email,
-                LocalDate dateOfBirth,
-                LocalDateTime accountCreation,
-                String phoneNumber,
-                String gender) {
-        this.firstName = firstName;
-        this.middleName = middleName;
-        this.lastName = lastName;
-        this.email = email;
-        this.dateOfBirth = dateOfBirth;
-        this.accountCreation = accountCreation;
-        this.phoneNumber = phoneNumber;
-        this.gender = gender;
+        this.bio = bio;
     }
 
     public String getUsername() {
@@ -105,11 +109,11 @@ public class User {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public LocalDateTime getAccountCreation() {
+    public LocalDate getAccountCreation() {
         return accountCreation;
     }
 
-    public void setAccountCreation(LocalDateTime accountCreation) {
+    public void setAccountCreation(LocalDate accountCreation) {
         this.accountCreation = accountCreation;
     }
 
@@ -129,17 +133,23 @@ public class User {
         this.gender = gender;
     }
 
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
     @Override
     public String toString() {
         return "User{" +
-                "username='" + username + '\'' +
-                ", firstName='" + firstName + '\'' +
+                "firstName='" + firstName + '\'' +
+                ", username='" + username + '\'' +
                 ", lastName='" + lastName + '\'' +
-                ", dateOfBirth=" + dateOfBirth +
-                ", accountCreation=" + accountCreation +
                 ", email='" + email + '\'' +
-                ", gender='" + gender + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
+                ", accountCreation=" + accountCreation +
                 '}';
     }
 }
