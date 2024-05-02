@@ -1,17 +1,22 @@
 package com.y.Y.models.user;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "\"User\"")
 public class User {
 
-
     @Id
-    @OneToOne()
+    @GeneratedValue
+    @UuidGenerator
+    @Column(nullable = false, unique = true, updatable = false)
+    private UUID id;
+
+    @Column(nullable = false, unique = true)
     private String username;
 
     @Column(nullable = false)
@@ -28,7 +33,7 @@ public class User {
     @Column(nullable = false)
     private LocalDate dateOfBirth;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDate accountCreation;
 
     @Column(unique = true)
@@ -45,7 +50,6 @@ public class User {
                 String lastName,
                 String email,
                 LocalDate dateOfBirth,
-                LocalDate accountCreation,
                 String phoneNumber,
                 String gender,
                 String bio) {
@@ -55,10 +59,18 @@ public class User {
         this.lastName = lastName;
         this.email = email;
         this.dateOfBirth = dateOfBirth;
-        this.accountCreation = accountCreation;
+        this.accountCreation = LocalDate.now();
         this.phoneNumber = phoneNumber;
         this.gender = gender;
         this.bio = bio;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public String getUsername() {
@@ -144,11 +156,11 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "firstName='" + firstName + '\'' +
+                "id=" + id +
                 ", username='" + username + '\'' +
+                ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
                 ", accountCreation=" + accountCreation +
                 '}';
     }

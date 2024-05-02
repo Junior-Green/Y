@@ -1,0 +1,44 @@
+POST http://localhost:8080/api/users HTTP/1.1
+content-type: application/json
+
+{
+"username":"juniorgreen",
+"firstName":"Junior",
+"middleName": "Christopher",
+"lastName":"Green",
+"email":"juniorgreen9185@hotmail.com",
+"dateOfBirth":"2002-05-13",
+"phoneNumber":"647-571-8450",
+"gender":"Male",
+"bio":"Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc."
+}
+
+###
+
+GET http://localhost:8080/api/users HTTP/1.1
+
+###
+
+GET http://localhost:8080/api/users/juniorgreen HTTP/1.1
+
+###
+
+DELETE http://localhost:8080/api/users?id=a17553f1-3602-4adc-a6e9-7745a08d4a30 HTTP/1.1
+
+###
+
+PUT http://localhost:8080/api/users?id=e3b08cf5-ced3-4f59-9e92-aabe6107049b&email=juniorblue9185@hotmail.com HTTP/1.1
+content-type: application/json
+
+{
+"username":"juniorblue",
+"firstName":"Junior",
+"middleName": "Christopher",
+"lastName":"Green",
+"email":"juniorblue9185@hotmail.com",
+"dateOfBirth":"2002-05-13",
+"accountCreation":"2024-04-28",
+"phoneNumber":"647-571-0000",
+"gender":"Male",
+"bio":"Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc."
+}
