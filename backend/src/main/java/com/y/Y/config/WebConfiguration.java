@@ -1,4 +1,4 @@
-package com.y.Y;
+package com.y.Y.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
