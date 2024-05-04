@@ -1,5 +1,6 @@
 package com.y.Y.models.user;
 
+import com.y.Y.models.user.controller_requests.CreateNewUserRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +23,6 @@ public class UserController {
         this.userService = userService;
     }
 
-
-
     @GetMapping
     public ResponseEntity<List<User>> getUsers() {
 
@@ -37,8 +36,8 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> addNewUser(@RequestBody User user) {
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(userService.addNewUser(user));
+    public ResponseEntity<User> createNewUser(@RequestBody CreateNewUserRequest req) {
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(userService.addNewUser(req.getUser(), req.getPassword()));
     }
 
     @PutMapping
@@ -46,7 +45,6 @@ public class UserController {
             @RequestParam("id") UUID id,
             @RequestBody() User user
             ){
-        logger.debug(user.toString());
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(userService.updateUser(id, user));
     }
 

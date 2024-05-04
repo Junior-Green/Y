@@ -15,7 +15,7 @@ public class ApiError {
     private String debugMessage;
 
     ApiError() {
-        timestamp = LocalDateTime.now();
+        this.timestamp = LocalDateTime.now();
     }
 
     ApiError(HttpStatus status) {
@@ -35,5 +35,21 @@ public class ApiError {
         this.status = status;
         this.message = message;
         this.debugMessage = ex.getLocalizedMessage();
+    }
+
+    public HttpStatus getStatus() {
+        return status;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public String getDebugMessage() {
+        return debugMessage;
     }
 }

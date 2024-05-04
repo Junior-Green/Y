@@ -20,6 +20,7 @@ public class WebConfiguration implements WebMvcConfigurer {
 
     @Bean
     RouterFunction<ServerResponse> spaRouter() {
+        // Serve index.html (React app) if no path names match
         ClassPathResource index = new ClassPathResource("static/index.html");
         List<String> extensions = Arrays.asList("js", "css", "ico", "png", "jpg", "gif", "svg");
         RequestPredicate spaPredicate = path("/api/**").or(pathExtension(extensions::contains)).negate();

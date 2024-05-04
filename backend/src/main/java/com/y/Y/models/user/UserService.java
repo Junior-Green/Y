@@ -1,8 +1,5 @@
 package com.y.Y.models.user;
 
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -11,7 +8,7 @@ public interface UserService {
 
     List<User> getUsers();
 
-    User addNewUser(User user);
+    User addNewUser(User user, String password);
 
     User getUserById(UUID id);
 

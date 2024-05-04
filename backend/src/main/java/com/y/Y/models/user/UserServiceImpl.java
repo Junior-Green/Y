@@ -1,9 +1,10 @@
 package com.y.Y.models.user;
+import com.y.Y.models.auth.AuthService;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.core.support.FragmentNotImplementedException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -15,10 +16,12 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final AuthService authService;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, AuthService authService) {
         this.userRepository = userRepository;
+        this.authService = authService;
     }
 
     @Override
@@ -27,9 +30,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User addNewUser(User user) {
+    @Transactional
+    public User addNewUser(User user, String password) {
         user.setAccountCreation(LocalDate.now());
-        return userRepository.save((user));
+        User savedUser = userRepository.save((user));
+        
+        authService.createNewUserAuth(savedUser.getId(),password);
+
+        return savedUser;
     }
 
     @Override

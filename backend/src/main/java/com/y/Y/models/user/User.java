@@ -1,5 +1,6 @@
 package com.y.Y.models.user;
 
+import com.y.Y.models.auth.Auth;
 import jakarta.persistence.*;
 import org.hibernate.annotations.UuidGenerator;
 
@@ -41,6 +42,9 @@ public class User {
 
     private String gender;
     private String bio;
+
+    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Auth auth;
 
     public User() {}
 
