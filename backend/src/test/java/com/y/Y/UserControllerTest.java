@@ -1,7 +1,7 @@
 package com.y.Y;
 
-import com.y.Y.models.user.User;
-import com.y.Y.models.user.UserService;
+import com.y.Y.features.user.User;
+import com.y.Y.features.user.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

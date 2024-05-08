@@ -2,15 +2,17 @@ POST http://localhost:8080/api/users HTTP/1.1
 content-type: application/json
 
 {
-"username":"juniorgreen",
-"firstName":"Junior",
-"middleName": "Christopher",
-"lastName":"Green",
-"email":"juniorgreen9185@hotmail.com",
-"dateOfBirth":"2002-05-13",
-"phoneNumber":"647-571-8450",
-"gender":"Male",
-"bio":"Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc."
+"user": {
+    "username":"juniorgreen",
+    "firstName":"Junior",
+    "middleName": "Christopher",
+    "lastName":"Green",
+    "email":"juniorgreen9185@hotmail.com",
+    "dateOfBirth":"2002-05-13",
+    "phoneNumber":"647-571-8450",
+    "gender":"Male"
+    },
+"password": "XsTj7uBH#xWuAR5"
 }
 
 ###
@@ -23,7 +25,7 @@ GET http://localhost:8080/api/users/juniorgreen HTTP/1.1
 
 ###
 
-DELETE http://localhost:8080/api/users?id=a17553f1-3602-4adc-a6e9-7745a08d4a30 HTTP/1.1
+DELETE http://localhost:8080/api/users?id=82f0d480-cd88-4eeb-b290-c99411e6ebb4 HTTP/1.1
 
 ###
 
@@ -34,3 +36,9 @@ content-type: application/json
 "email":"juniororange9185@hotmail.com",
 "username": "juniororange9185"
 }
+
+###
+
+PUT http://localhost:8080/api/auth/6cca6416-1403-4cb0-90cc-827eedce9351 HTTP/1.1
+
+"939==391vm3149j=#*_+THn3-"
