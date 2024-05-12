@@ -10,6 +10,7 @@ import java.util.UUID;
 @Table(name = "session")
 @Entity
 public class Session {
+    public static final int SESSION_EXPIRATION_SECONDS = 2592000;
 
     @Id
     @GeneratedValue
@@ -20,31 +21,28 @@ public class Session {
     @Column(nullable = false, updatable = false)
     private LocalDateTime expiration;
 
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="user_id", nullable = false, updatable = false)
     private User user;
 
-    public UUID getId() {
-        return id;
+    public Session(){}
+
+    public Session(LocalDateTime expiration, User user) {
+        this.expiration = expiration;
+        this.user = user;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
+    public UUID getId() {
+        return id;
     }
 
     public LocalDateTime getExpiration() {
         return expiration;
     }
 
-    public void setExpiration(LocalDateTime expiration) {
-        this.expiration = expiration;
-    }
-
     public User getUser() {
         return user;
     }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
+
 }

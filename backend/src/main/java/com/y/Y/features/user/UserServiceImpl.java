@@ -1,12 +1,15 @@
 package com.y.Y.features.user;
 import com.y.Y.error.custom_exceptions.DuplicateDataException;
 import com.y.Y.features.auth.AuthService;
+import com.y.Y.features.session.Session;
+import com.y.Y.features.user.user_details.CustomUserDetails;
+import com.y.Y.features.user.user_details.CustomUserDetailsService;
 import org.springframework.http.HttpStatus;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,11 +21,13 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final AuthService authService;
+    private final CustomUserDetailsService customUserDetailsService;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, AuthService authService) {
+    public UserServiceImpl(UserRepository userRepository, AuthService authService, CustomUserDetailsService customUserDetailsService) {
         this.userRepository = userRepository;
         this.authService = authService;
+        this.customUserDetailsService = customUserDetailsService;
     }
 
     @Override
@@ -134,5 +139,12 @@ public class UserServiceImpl implements UserService {
         else {
             throw new EntityNotFoundException("No user found with email: " + email);
         }
+    }
+
+    @Override
+    @Transactional
+    public User getUserBySession(UUID sessionId) {
+        CustomUserDetails userDetails = customUserDetailsService.loadUserBySessionId(sessionId);
+        return userRepository.getReferenceById(userDetails.getId());
     }
 }

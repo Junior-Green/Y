@@ -1,10 +1,8 @@
 package com.y.Y.filters;
 
-import com.y.Y.features.auth.CustomAuthenticationManager;
-import com.y.Y.features.auth.SessionAuthenticationToken;
-import com.y.Y.features.session.Session;
-import com.y.Y.features.session.SessionService;
-import com.y.Y.features.session.SessionServiceImpl;
+import com.y.Y.config.SecurityConfiguration;
+import com.y.Y.error.custom_exceptions.MissingCookieException;
+import com.y.Y.features.auth.tokens.SessionAuthenticationToken;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -14,43 +12,39 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.session.SessionAuthenticationException;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
-public class CustomSessionAuthenticationFilter extends OncePerRequestFilter {
-    final private SessionService sessionService;
-    final private CustomAuthenticationManager authenticationManager;
+import static com.y.Y.utils.UtilityService.extractSessionCookieFromRequest;
 
-    public CustomSessionAuthenticationFilter(SessionService sessionService, CustomAuthenticationManager authenticationManager) {
-        this.sessionService = sessionService;
+public class CustomSessionAuthenticationFilter extends OncePerRequestFilter {
+    final private AuthenticationManager authenticationManager;
+
+    public CustomSessionAuthenticationFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
     }
 
-
     @Override
-    protected void doFilterInternal( HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain filterChain) throws ServletException, IOException {
-        Cookie[] cookies = request.getCookies();
-        Cookie sessionCookie = null;
+    public void doFilterInternal(@NotNull HttpServletRequest request,
+                                 @NotNull HttpServletResponse response,
+                                 @NotNull FilterChain filterChain) throws ServletException, IOException, MissingCookieException {
+        Cookie sessionCookie = extractSessionCookieFromRequest(request);
 
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("session")) {
-                sessionCookie = cookie;
-                break;
-            }
-        }
-
-        if (sessionCookie == null){
-            throw new SessionAuthenticationException("Session cookie not found in request");
-        }
-
-        Session session = sessionService.getSessionById(UUID.fromString(sessionCookie.getValue()));
-        Authentication authToken = new SessionAuthenticationToken(session);
+        Authentication authToken = new SessionAuthenticationToken(UUID.fromString(sessionCookie.getValue()));
         Authentication validatedAuthToken = authenticationManager.authenticate(authToken);
         SecurityContextHolder.getContext().setAuthentication(validatedAuthToken);
 
         filterChain.doFilter(request, response);
     }
+
+    @Override
+    protected boolean shouldNotFilter(@NotNull HttpServletRequest request) {
+        final List<String> urls = Arrays.asList(SecurityConfiguration.PUBLIC_URLS);
+        return urls.contains(request.getServletPath());
+    }
+
+
 }

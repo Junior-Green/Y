@@ -1,5 +1,8 @@
 package com.y.Y.features.user;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.y.Y.features.auth.Auth;
 import com.y.Y.features.session.Session;
 import com.y.Y.features.user.user_details.CustomUserDetails;
@@ -90,36 +93,37 @@ public class User implements CustomUserDetails {
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonExpired() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonLocked() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isEnabled() {
         return true;
     }
 
     @Override
-    public String getSalt() {
-        return auth.getSalt();
-    }
-
-    @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of();
     }
 
     @Override
+    @JsonIgnore
     public String getPassword(){
         return auth.getPassword();
     }
@@ -193,9 +197,10 @@ public class User implements CustomUserDetails {
     }
 
     public String getBio() {
-        return bio;
+        return bio == null ? "" : bio;
     }
 
+    @JsonProperty()
     public void setBio(String bio) {
         this.bio = bio;
     }

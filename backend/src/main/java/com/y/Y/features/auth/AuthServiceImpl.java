@@ -7,7 +7,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -20,18 +20,20 @@ public class AuthServiceImpl implements AuthService{
 
     private final AuthRepository authRepository;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AuthServiceImpl(AuthRepository authRepository, UserRepository userRepository) {
+    public AuthServiceImpl(AuthRepository authRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.authRepository = authRepository;
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     @Transactional
-    public void updatePassword(UUID user_id, String newPassword) {
-        if (newPassword.length() > MAX_PASSWORD_LENGTH){
-            throw new StringLengthExceededException("Password length exceeds 32 characters (" + newPassword + ")", HttpStatus.BAD_REQUEST, newPassword);
+    public void updatePassword(UUID user_id, String rawPassword) {
+        if (rawPassword.length() > MAX_PASSWORD_LENGTH){
+            throw new StringLengthExceededException("Password length exceeds 32 characters (" + rawPassword + ")", HttpStatus.BAD_REQUEST, rawPassword);
         }
 
         Optional<Auth> optionalAuth = authRepository.findAuthByUserId(user_id);
@@ -41,26 +43,20 @@ public class AuthServiceImpl implements AuthService{
         }
         else{
             Auth auth = optionalAuth.get();
-            String newSalt = BCrypt.gensalt();
-            String newHashedPassword = BCrypt.hashpw(newPassword, newSalt);
-            auth.setPassword(newHashedPassword);
-            auth.setSalt(newSalt);
+            auth.setPassword(passwordEncoder.encode(rawPassword));
             authRepository.save(auth);
         }
     }
 
     @Override
-    public void createNewUserAuth(UUID user_id, String password) {
-        if (password.length() > MAX_PASSWORD_LENGTH){
-            throw new StringLengthExceededException("Password length exceeds 32 characters (" + password + ")", HttpStatus.BAD_REQUEST, password);
+    public void createNewUserAuth(UUID user_id, String rawPassword) {
+        if (rawPassword.length() > MAX_PASSWORD_LENGTH){
+            throw new StringLengthExceededException("Password length exceeds 32 characters (" + rawPassword + ")", HttpStatus.BAD_REQUEST, rawPassword);
         }
-
-        String newSalt = BCrypt.gensalt();
-        String newHashedPassword = BCrypt.hashpw(password, newSalt);
 
         User user = userRepository.getReferenceById(user_id);
 
-        Auth newAuth = new Auth(user, newHashedPassword, newSalt);
+        Auth newAuth = new Auth(user, passwordEncoder.encode(rawPassword));
         authRepository.save(newAuth);
     }
 

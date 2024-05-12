@@ -5,16 +5,15 @@ import com.y.Y.features.user.User;
 
 public final class LoginRequest {
 
-    @JsonProperty("username")
-    private final User username;
+    private final String username;
     private final String password;
 
-    public LoginRequest(User username, String password) {
+    public LoginRequest(String username, String password) {
         this.username = username;
         this.password = password;
     }
 
-    public User getUsername() {
+    public String getUsername() {
         return username;
     }
 

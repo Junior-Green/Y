@@ -23,15 +23,11 @@ public class Auth {
 
     private String password;
 
-    @Column(nullable = false)
-    private String salt;
-
     public Auth() {}
 
-    public Auth(User user, String password, String salt) {
+    public Auth(User user, String password) {
         this.user = user;
         this.password = password;
-        this.salt = salt;
     }
 
     public UUID getId() {
@@ -58,18 +54,9 @@ public class Auth {
         this.password = password;
     }
 
-    public String getSalt() {
-        return salt;
-    }
-
-    public void setSalt(String salt) {
-        this.salt = salt;
-    }
-
     @Override
     public String toString() {
         return "Auth{" +
-                "salt='" + salt + '\'' +
                 ", password='" + password + '\'' +
                 ", user=" + user +
                 ", id=" + id +

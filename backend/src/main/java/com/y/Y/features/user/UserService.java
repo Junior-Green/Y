@@ -14,6 +14,10 @@ public interface UserService {
 
     User getUserByUsername(String username);
 
+    User getUserByEmail(String username);
+
+    User getUserBySession(UUID sessionId);
+
     User getUserByPhoneNumber(String phoneNumber);
 
     void deleteUser(UUID id);

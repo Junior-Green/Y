@@ -1,6 +1,5 @@
-package com.y.Y.features.auth;
+package com.y.Y.features.auth.tokens;
 
-import com.y.Y.features.session.Session;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -8,18 +7,19 @@ import javax.security.auth.Subject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 public class SessionAuthenticationToken implements Authentication {
-    private final Session session;
+    private final UUID sessionId;
     private final Collection<? extends GrantedAuthority> grantedAuthorities;
 
-    public SessionAuthenticationToken(Session session, Collection<? extends GrantedAuthority> grantedAuthorities) {
-        this.session = session;
+    public SessionAuthenticationToken(UUID sessionId, Collection<? extends GrantedAuthority> grantedAuthorities) {
+        this.sessionId = sessionId;
         this.grantedAuthorities = grantedAuthorities;
     }
 
-    public SessionAuthenticationToken(Session session) {
-        this.session = session;
+    public SessionAuthenticationToken(UUID sessionId) {
+        this.sessionId = sessionId;
         this.grantedAuthorities = new ArrayList<>();
     }
 
@@ -30,7 +30,7 @@ public class SessionAuthenticationToken implements Authentication {
 
     @Override
     public Object getCredentials() {
-        return session;
+        return sessionId;
     }
 
     @Override
@@ -40,7 +40,7 @@ public class SessionAuthenticationToken implements Authentication {
 
     @Override
     public Object getPrincipal() {
-        return session;
+        return sessionId;
     }
 
     @Override
@@ -65,17 +65,15 @@ public class SessionAuthenticationToken implements Authentication {
      */
     @Override
     public boolean equals(Object another) {
-        if (Session.class != another.getClass()) return false;
-
-        Session anotherSession = (Session) another;
-        return session.getId().equals(anotherSession.getId());
+        if (UUID.class != another.getClass()) return false;
+        return sessionId.equals(another);
     }
 
 
     @Override
     public String toString() {
         return "SessionAuthenticationToken{" +
-                "session=" + session +
+                "sessionId=" + sessionId +
                 '}';
     }
 
@@ -86,7 +84,7 @@ public class SessionAuthenticationToken implements Authentication {
      */
     @Override
     public String getName() {
-        return "";
+        return "Session ID";
     }
 
     /**
