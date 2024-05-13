@@ -12,9 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -87,6 +85,37 @@ public class UserServiceImpl implements UserService {
             throw new EntityNotFoundException("User id: " + id + " does not exist.");
         }
         userRepository.deleteById(id);
+    }
+
+
+    @Override
+    @Transactional
+    public void followUsers(UUID follower, Set<UUID> usersFollowed) {
+        User followerFetched = userRepository.getReferenceById(follower);
+        Set<User> usersFollowedFetched = new HashSet<>(usersFollowed.stream().map(userRepository::getReferenceById).toList());
+        for (User userFollowed : usersFollowedFetched){
+            followerFetched.followUser(userFollowed);
+            userFollowed.addFollower(followerFetched);
+        }
+
+        userRepository.save(followerFetched);
+        userRepository.saveAll(usersFollowedFetched);
+    }
+
+
+    @Override
+    @Transactional
+    public void unfollowUsers(UUID unfollower, Set<UUID> usersUnfollowed) {
+        User unfollowerFetched = userRepository.getReferenceById(unfollower);
+
+        Set<User> usersUnfollowedFetched = new HashSet<>(usersUnfollowed.stream().map(userRepository::getReferenceById).toList());
+        for (User userUnfollowed : usersUnfollowedFetched){
+            unfollowerFetched.followUser(userUnfollowed);
+            userUnfollowed.addFollower(unfollowerFetched);
+        }
+
+        userRepository.save(unfollowerFetched);
+        userRepository.saveAll(usersUnfollowedFetched);
     }
 
     @Override

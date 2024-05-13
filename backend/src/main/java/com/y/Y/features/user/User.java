@@ -1,9 +1,8 @@
 package com.y.Y.features.user;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.y.Y.features.auth.Auth;
+import com.y.Y.features.post.Post;
 import com.y.Y.features.session.Session;
 import com.y.Y.features.user.user_details.CustomUserDetails;
 import jakarta.persistence.*;
@@ -11,9 +10,7 @@ import org.hibernate.annotations.UuidGenerator;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "\"User\"")
@@ -54,8 +51,35 @@ public class User implements CustomUserDetails {
     @OneToOne(mappedBy = "user",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Auth auth;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<Session> sessions;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Session> sessions;
+
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Post> posts;
+
+    @ManyToMany
+    @JoinTable(
+            name = "blocked_users",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "blocked_user_id")
+    )
+    private Set<User> blockedUsers;
+
+    @ManyToMany
+    @JoinTable(
+            name = "followers",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "follower_id")
+    )
+    private Set<User> followers;
+
+    @ManyToMany
+    @JoinTable(
+            name = "following",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "following_id")
+    )
+    private Set<User> following;
 
     public User() {}
 
@@ -90,42 +114,6 @@ public class User implements CustomUserDetails {
 
     public String getUsername() {
         return username;
-    }
-
-    @Override
-    @JsonIgnore
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    @JsonIgnore
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    @JsonIgnore
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    @JsonIgnore
-    public boolean isEnabled() {
-        return true;
-    }
-
-    @Override
-    @JsonIgnore
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
-    }
-
-    @Override
-    @JsonIgnore
-    public String getPassword(){
-        return auth.getPassword();
     }
 
     public void setUsername(String username) {
@@ -200,9 +188,116 @@ public class User implements CustomUserDetails {
         return bio == null ? "" : bio;
     }
 
-    @JsonProperty()
     public void setBio(String bio) {
         this.bio = bio;
+    }
+
+    public List<Post> getReplies() {
+        return posts.stream().filter(post -> post.getParent() != null).toList();
+    }
+
+    public List<Post> getPosts() {
+        return posts.stream().filter(post -> post.getParent() == null).toList();
+    }
+
+    public Set<User> getBlockedUsers() {
+        return blockedUsers;
+    }
+
+    public void setBlockedUsers(Set<User> blockedUsers) {
+        this.blockedUsers = blockedUsers;
+    }
+
+    public void addBlockedUser(User blockedUser) {
+        if (blockedUsers == null) {blockedUsers = new HashSet<>();}
+        blockedUsers.add(blockedUser);
+    }
+
+    public void unblockUser(User user){
+        if(blockedUsers == null || blockedUsers.isEmpty()) return;
+        blockedUsers.remove(user);
+    }
+
+    public Set<User> getFollowing() {
+        return following;
+    }
+
+    public void setFollowing(Set<User> following) {
+        this.following = following;
+    }
+
+    public void followUser(User user) {
+        if (following == null) {following = new HashSet<>();}
+        following.add(user);
+    }
+
+    public void unfollowUser(User user){
+        if(following == null || following.isEmpty()) return;
+        following.remove(user);
+    }
+
+    public Set<User> getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(Set<User> followers) {
+        this.followers = followers;
+    }
+
+    public void addFollower(User newFollower) {
+        if (followers == null) {followers = new HashSet<>();}
+        followers.add(newFollower);
+    }
+
+    public void removeFollower(User follower){
+        if(followers == null || followers.isEmpty()) return;
+        followers.remove(follower);
+    }
+
+    @JsonIgnore
+    public Set<Post> getAllPosts() {
+        return posts;
+    }
+
+    @JsonIgnore
+    public Set<Session> getSessions() {
+        return sessions;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isEnabled() {
+        return true;
+    }
+
+    @Override
+    @JsonIgnore
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
+
+    @Override
+    @JsonIgnore
+    public String getPassword(){
+        return auth.getPassword();
     }
 
     @Override

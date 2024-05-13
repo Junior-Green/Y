@@ -1,6 +1,7 @@
 package com.y.Y.features.user;
 
 import com.y.Y.features.user.controller_requests.CreateNewUserRequest;
+import com.y.Y.features.user.controller_requests.UpdateFollowersRequest;
 import com.y.Y.features.user.user_details.CustomUserDetailsService;
 import com.y.Y.features.user.user_details.CustomUserDetailsServiceImpl;
 import jakarta.servlet.http.Cookie;
@@ -53,12 +54,18 @@ public class UserController {
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(userService.addNewUser(req.getUser(), req.getPassword()));
     }
 
-    @PutMapping
+    @PutMapping(path = "/{id}")
     public ResponseEntity<User> updateUser(
-            @RequestParam("id") UUID id,
+            @PathVariable("id") UUID id,
             @RequestBody() User user
             ){
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(userService.updateUser(id, user));
+    }
+
+    @PutMapping(path = "/{id}/followers")
+    public ResponseEntity<String> addFollowers(@PathVariable("id") UUID id, @RequestBody UpdateFollowersRequest request){
+
+        return ResponseEntity.ok("Followers updated");
     }
 
     @DeleteMapping()
