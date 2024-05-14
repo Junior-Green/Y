@@ -40,6 +40,9 @@ public class Post {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
     private LocalDateTime createdAt;
 
+    @Column(nullable = false, updatable = false)
+    private boolean isQoutePost = false;
+
     public Post() {}
 
     public Post(User author, String content, LocalDateTime createdAt) {
@@ -88,9 +91,24 @@ public class Post {
         if (replies == null) {replies = new HashSet<>();}
         replies.add(reply);
         reply.setParent(this);
+        reply.setIsQoutePost(false);
     }
 
     public UUID getAuthorId(){return author.getId();}
+
+    public boolean isQoutePost() {
+        return isQoutePost;
+    }
+
+    @JsonIgnore
+    public void setIsQoutePost(boolean qoutePost) {
+        isQoutePost = qoutePost;
+    }
+
+    @JsonIgnore
+    public void setAuthor(User author) {
+        this.author = author;
+    }
 
     @JsonIgnore
     public void setParent(Post parent) {

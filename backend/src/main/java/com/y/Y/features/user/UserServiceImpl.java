@@ -169,11 +169,4 @@ public class UserServiceImpl implements UserService {
             throw new EntityNotFoundException("No user found with email: " + email);
         }
     }
-
-    @Override
-    @Transactional
-    public User getUserBySession(UUID sessionId) {
-        CustomUserDetails userDetails = customUserDetailsService.loadUserBySessionId(sessionId);
-        return userRepository.getReferenceById(userDetails.getId());
-    }
 }

@@ -2,6 +2,7 @@ package com.y.Y.features.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.y.Y.features.auth.Auth;
+import com.y.Y.features.likes.Likes;
 import com.y.Y.features.post.Post;
 import com.y.Y.features.session.Session;
 import com.y.Y.features.user.user_details.CustomUserDetails;
@@ -56,6 +57,9 @@ public class User implements CustomUserDetails {
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Post> posts;
+
+    @OneToMany(mappedBy = "likedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Likes> likes;
 
     @ManyToMany
     @JoinTable(

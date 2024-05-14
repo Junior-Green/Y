@@ -17,7 +17,6 @@ public interface UserService {
 
     User getUserByEmail(String username);
 
-    User getUserBySession(UUID sessionId);
 
     User getUserByPhoneNumber(String phoneNumber);
 

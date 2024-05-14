@@ -1,22 +1,18 @@
 package com.y.Y.features.user;
 
 import com.y.Y.features.user.controller_requests.CreateNewUserRequest;
-import com.y.Y.features.user.controller_requests.UpdateFollowersRequest;
 import com.y.Y.features.user.user_details.CustomUserDetailsService;
-import com.y.Y.features.user.user_details.CustomUserDetailsServiceImpl;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.UUID;
-
-import static com.y.Y.utils.UtilityService.extractSessionCookieFromRequest;
+import java.util.*;
 
 @RestController
 @RequestMapping(path = "/api/users")
@@ -38,9 +34,9 @@ public class UserController {
 
     @GetMapping(path = "/me")
     public ResponseEntity<User> getAuthenticatedUser(HttpServletRequest request){
-        Cookie sessionCooke = extractSessionCookieFromRequest(request);
-        User authenticatedUser = userService.getUserBySession(UUID.fromString(sessionCooke.getValue()));
-        return ResponseEntity.ok(authenticatedUser);
+        Authentication authenticatedUser = SecurityContextHolder.getContext().getAuthentication();
+
+        return ResponseEntity.ok(userService.getUserById((UUID) authenticatedUser.getPrincipal()));
     }
 
     @GetMapping(path = "/{username}")
@@ -62,10 +58,18 @@ public class UserController {
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(userService.updateUser(id, user));
     }
 
-    @PutMapping(path = "/{id}/followers")
-    public ResponseEntity<String> addFollowers(@PathVariable("id") UUID id, @RequestBody UpdateFollowersRequest request){
+    @PutMapping(path = "/follow/{id}")
+    public ResponseEntity<String> followUser(@PathVariable("id") UUID id){
+        Authentication authenticatedUser = SecurityContextHolder.getContext().getAuthentication();
+        userService.followUsers((UUID) authenticatedUser.getPrincipal(), Collections.singleton(id));
+        return ResponseEntity.ok("User: " + id + " followed.");
+    }
 
-        return ResponseEntity.ok("Followers updated");
+    @DeleteMapping(path = "/unfollow/{id}")
+    public ResponseEntity<String> unfollowUser(@PathVariable("id") UUID id){
+        Authentication authenticatedUser = SecurityContextHolder.getContext().getAuthentication();
+        userService.unfollowUsers((UUID) authenticatedUser.getPrincipal(), Collections.singleton(id));
+        return ResponseEntity.ok("User: " + id + " unfollowed.");
     }
 
     @DeleteMapping()
