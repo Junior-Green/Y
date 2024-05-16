@@ -1,9 +1,6 @@
 package com.y.Y.features.user;
 import com.y.Y.error.custom_exceptions.DuplicateDataException;
 import com.y.Y.features.auth.AuthService;
-import com.y.Y.features.session.Session;
-import com.y.Y.features.user.user_details.CustomUserDetails;
-import com.y.Y.features.user.user_details.CustomUserDetailsService;
 import org.springframework.http.HttpStatus;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -19,13 +16,11 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final AuthService authService;
-    private final CustomUserDetailsService customUserDetailsService;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, AuthService authService, CustomUserDetailsService customUserDetailsService) {
+    public UserServiceImpl(UserRepository userRepository, AuthService authService) {
         this.userRepository = userRepository;
         this.authService = authService;
-        this.customUserDetailsService = customUserDetailsService;
     }
 
     @Override
@@ -120,6 +115,31 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    public void blockUsers(UUID blockerId, Set<UUID> blockedUsers) {
+        User blocker = userRepository.getReferenceById(blockerId);
+
+        Set<User> blockedUsersFetched = new HashSet<>(blockedUsers.stream().map(userRepository::getReferenceById).toList());
+
+        for (User blockedUser : blockedUsersFetched){
+            blocker.addBlockedUser(blockedUser);
+        }
+
+    }
+
+    @Override
+    public void unblockUsers(UUID unblockerId, Set<UUID> unblockedUsers) {
+        User unblocker = userRepository.getReferenceById(unblockerId);
+
+        Set<User> unblockedUsersFetched = new HashSet<>(unblockedUsers.stream().map(userRepository::getReferenceById).toList());
+
+        for (User blockedUser : unblockedUsersFetched){
+            unblocker.addBlockedUser(blockedUser);
+        }
+
+    }
+
+    @Override
+    @Transactional
     public User updateUser(UUID id, User newUser) {
             Optional<User> optionalUser = userRepository.findById(id);
 
@@ -140,8 +160,8 @@ public class UserServiceImpl implements UserService {
                 if(newUser.getBio() != null){
                     foundUser.setBio(newUser.getBio());
                 }
-                if(newUser.getDateOfBirth() != null){
-                    foundUser.setDateOfBirth(newUser.getDateOfBirth());
+                if(newUser.getBirthday() != null){
+                    foundUser.setBirthday(newUser.getBirthday());
                 }
                 if(newUser.getEmail() != null){
                     foundUser.setEmail(newUser.getEmail());
@@ -154,6 +174,18 @@ public class UserServiceImpl implements UserService {
                 }
                 if(newUser.getPhoneNumber() != null){
                     foundUser.setPhoneNumber(newUser.getPhoneNumber());
+                }
+
+                if(newUser.getDisplayName() != null){
+                    foundUser.setDisplayName(newUser.getDisplayName());
+                }
+
+                if(newUser.getWebsiteUrl() != null){
+                    foundUser.setWebsiteUrl(newUser.getWebsiteUrl());
+                }
+
+                if(newUser.getLocation() != null){
+                    foundUser.setLocation(newUser.getLocation());
                 }
 
                 return userRepository.save(foundUser);

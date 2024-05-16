@@ -2,10 +2,8 @@ package com.y.Y.features.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.y.Y.features.auth.Auth;
-import com.y.Y.features.likes.Likes;
-import com.y.Y.features.post.Post;
-import com.y.Y.features.session.Session;
 import com.y.Y.features.user.user_details.CustomUserDetails;
+import com.y.Y.features.user.user_profile.UserProfile;
 import jakarta.persistence.*;
 import org.hibernate.annotations.UuidGenerator;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,7 +13,7 @@ import java.util.*;
 
 @Entity
 @Table(name = "\"User\"")
-public class User implements CustomUserDetails {
+public class User implements CustomUserDetails, UserProfile {
 
     @Id
     @GeneratedValue
@@ -38,7 +36,7 @@ public class User implements CustomUserDetails {
     private String email;
 
     @Column(nullable = false)
-    private LocalDate dateOfBirth;
+    private LocalDate birthday;
 
     @Column(nullable = false, updatable = false)
     private LocalDate accountCreation;
@@ -46,20 +44,17 @@ public class User implements CustomUserDetails {
     @Column(unique = true)
     private String phoneNumber;
 
+    @Column(nullable = false)
+    private boolean isVerified;
+
+    private String displayName;
+    private String websiteUrl;
+    private String location;
     private String gender;
     private String bio;
 
     @OneToOne(mappedBy = "user",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Auth auth;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Session> sessions;
-
-    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Post> posts;
-
-    @OneToMany(mappedBy = "likedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Likes> likes;
 
     @ManyToMany
     @JoinTable(
@@ -92,7 +87,7 @@ public class User implements CustomUserDetails {
                 String middleName,
                 String lastName,
                 String email,
-                LocalDate dateOfBirth,
+                LocalDate birthday,
                 String phoneNumber,
                 String gender,
                 String bio) {
@@ -101,7 +96,7 @@ public class User implements CustomUserDetails {
         this.middleName = middleName;
         this.lastName = lastName;
         this.email = email;
-        this.dateOfBirth = dateOfBirth;
+        this.birthday = birthday;
         this.accountCreation = LocalDate.now();
         this.phoneNumber = phoneNumber;
         this.gender = gender;
@@ -156,12 +151,13 @@ public class User implements CustomUserDetails {
         this.email = email;
     }
 
-    public LocalDate getDateOfBirth() {
-        return dateOfBirth;
+    @Override
+    public LocalDate getBirthday() {
+        return birthday;
     }
 
-    public void setDateOfBirth(LocalDate dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
+    public void setBirthday(LocalDate birthday) {
+        this.birthday = birthday;
     }
 
     public LocalDate getAccountCreation() {
@@ -188,6 +184,34 @@ public class User implements CustomUserDetails {
         this.gender = gender;
     }
 
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getWebsiteUrl() {
+        return websiteUrl;
+    }
+
+    public void setWebsiteUrl(String url) {
+        this.websiteUrl = url;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public boolean isVerified() {
+        return isVerified;
+    }
+
     public String getBio() {
         return bio == null ? "" : bio;
     }
@@ -196,13 +220,6 @@ public class User implements CustomUserDetails {
         this.bio = bio;
     }
 
-    public List<Post> getReplies() {
-        return posts.stream().filter(post -> post.getParent() != null).toList();
-    }
-
-    public List<Post> getPosts() {
-        return posts.stream().filter(post -> post.getParent() == null).toList();
-    }
 
     public Set<User> getBlockedUsers() {
         return blockedUsers;
@@ -215,11 +232,6 @@ public class User implements CustomUserDetails {
     public void addBlockedUser(User blockedUser) {
         if (blockedUsers == null) {blockedUsers = new HashSet<>();}
         blockedUsers.add(blockedUser);
-    }
-
-    public void unblockUser(User user){
-        if(blockedUsers == null || blockedUsers.isEmpty()) return;
-        blockedUsers.remove(user);
     }
 
     public Set<User> getFollowing() {
@@ -258,14 +270,19 @@ public class User implements CustomUserDetails {
         followers.remove(follower);
     }
 
-    @JsonIgnore
-    public Set<Post> getAllPosts() {
-        return posts;
+    public void blockUser(User user) {
+        if (blockedUsers == null) {blockedUsers = new HashSet<>();}
+        blockedUsers.add(user);
+    }
+
+    public void unblockUser(User user) {
+        if(blockedUsers == null || blockedUsers.isEmpty()) return;
+        blockedUsers.remove(user);
     }
 
     @JsonIgnore
-    public Set<Session> getSessions() {
-        return sessions;
+    public void setVerified(boolean verified) {
+        isVerified = verified;
     }
 
     @Override

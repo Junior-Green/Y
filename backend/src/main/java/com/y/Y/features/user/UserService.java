@@ -24,7 +24,11 @@ public interface UserService {
 
     void followUsers(UUID follower, Set<UUID> usersFollowed);
 
-    void unfollowUsers(UUID unfollower, Set<UUID> usersUnfollowed);
+    void unfollowUsers(UUID unfollowerId, Set<UUID> usersUnfollowed);
+
+    void blockUsers(UUID blocker, Set<UUID> blockedUsers);
+
+    void unblockUsers(UUID unblockerId, Set<UUID> unblockedUsers);
 
     User updateUser(UUID id, User user);
 }

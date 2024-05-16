@@ -2,6 +2,7 @@ package com.y.Y.features.post;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.y.Y.features.hashtag.HashTag;
 import com.y.Y.features.user.User;
 import jakarta.persistence.*;
 import org.hibernate.annotations.UuidGenerator;
@@ -43,6 +44,9 @@ public class Post {
     @Column(nullable = false, updatable = false)
     private boolean isQoutePost = false;
 
+    @ManyToMany(mappedBy = "posts", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<HashTag> hashtags;
+
     public Post() {}
 
     public Post(User author, String content, LocalDateTime createdAt) {
@@ -81,6 +85,10 @@ public class Post {
 
     public Set<Post> getReplies() {
         return replies;
+    }
+
+    public Set<String> getHashtags() {
+        return new HashSet<>(hashtags.stream().map(HashTag::getName).toList());
     }
 
     public void setReplies(Set<Post> replies) {
