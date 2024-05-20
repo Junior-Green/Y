@@ -8,6 +8,11 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public final class UtilityService {
 
     public static String convertObjectToJson(Object object) throws JsonProcessingException {
@@ -38,5 +43,21 @@ public final class UtilityService {
             throw new MissingCookieException(HttpStatus.UNAUTHORIZED, "session");
         }
         return sessionCookie;
+    }
+
+    public static boolean hasHashtag(String text) {
+        Pattern pattern = Pattern.compile("#\\w+");
+        Matcher matcher = pattern.matcher(text);
+        return matcher.find();
+    }
+
+    public static Set<String> extractHashtagNames(String text) {
+        Set<String> hashtagNames = new HashSet<>();
+        Pattern pattern = Pattern.compile("#(\\w+)");
+        Matcher matcher = pattern.matcher(text);
+        while (matcher.find()) {
+            hashtagNames.add(matcher.group(1));
+        }
+        return hashtagNames;
     }
 }

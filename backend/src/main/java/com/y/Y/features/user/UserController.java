@@ -5,15 +5,15 @@ import com.y.Y.features.like.LikeService;
 import com.y.Y.features.user.controller_requests.CreateNewUserRequest;
 import com.y.Y.features.user.user_details.CustomUserDetailsService;
 import com.y.Y.features.user.user_profile.UserProfile;
-import jakarta.servlet.http.HttpServletRequest;
+import com.y.Y.features.user.user_profile.UserProfileImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -33,22 +33,32 @@ public class UserController {
         this.likeService = likeService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<User>> getUsers() {
-
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(userService.getUsers());
-    }
-
     @GetMapping(path = "/me")
-    public ResponseEntity<User> getAuthenticatedUser(HttpServletRequest request){
+    public ResponseEntity<User> getAuthenticatedUser(){
         Authentication authenticatedUser = SecurityContextHolder.getContext().getAuthentication();
 
         return ResponseEntity.ok(userService.getUserById((UUID) authenticatedUser.getPrincipal()));
     }
 
-    @GetMapping(path = "/{username}")
-    public ResponseEntity<UserProfile> getUserProfileByUsername(@PathVariable("username") String username) {
-        return ResponseEntity.ok().body(userService.getUserByUsername(username));
+    @GetMapping
+    public ResponseEntity<UserProfile> getUserProfileByUsername(
+            @RequestParam(value = "id", required = false) UUID id,
+            @RequestParam(value = "email", required = false) String email,
+            @RequestParam(value = "phone", required = false) String phoneNumber) {
+
+        if (id != null){
+            return ResponseEntity.ok().body(new UserProfileImpl(userService.getUserById(id)));
+        }
+        if (email != null) {
+            return ResponseEntity.ok().body(new UserProfileImpl(userService.getUserByEmail(email)));
+        }
+        if(phoneNumber != null){
+            return ResponseEntity.ok().body(new UserProfileImpl(userService.getUserByPhoneNumber(phoneNumber)));
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+
+
     }
 
     @GetMapping("/likes/{id}")

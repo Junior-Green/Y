@@ -1,17 +1,15 @@
 package com.y.Y.features.like;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.y.Y.features.post.Post;
 import com.y.Y.features.user.User;
 import jakarta.persistence.*;
 import org.hibernate.annotations.UuidGenerator;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "Like")
+@Table(name = "Likes")
 public class Like {
 
     @Id
@@ -20,11 +18,11 @@ public class Like {
     @Column(nullable = false, unique = true, updatable = false)
     private UUID id;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, updatable = false)
     private User likedBy;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false, updatable = false)
     private Post likedPost;
 
@@ -34,12 +32,10 @@ public class Like {
     public Like() {
     }
 
-    public Like(User likedBy, Post likedPost, LocalDateTime created) {
+    public Like(User likedBy, Post likedPost) {
         this.likedBy = likedBy;
         this.likedPost = likedPost;
-        this.created = created;
     }
-
 
     public UUID getLikedByUserId(){
         return likedBy.getId();
@@ -49,9 +45,7 @@ public class Like {
         this.likedBy = likedBy;
     }
 
-    public Post getLikedPost() {
-        return likedPost;
-    }
+    public UUID getLikedPostId() {return likedPost.getId();}
 
     public void setLikedPost(Post likedPost) {
         this.likedPost = likedPost;
@@ -59,6 +53,11 @@ public class Like {
 
     public LocalDateTime getCreated() {
         return created;
+    }
+
+    @JsonIgnore
+    public Post getLikedPost() {
+        return likedPost;
     }
 
     @JsonIgnore

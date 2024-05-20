@@ -1,4 +1,5 @@
 package com.y.Y.features.user;
+import com.y.Y.error.custom_exceptions.BadRequestException;
 import com.y.Y.error.custom_exceptions.DuplicateDataException;
 import com.y.Y.features.auth.AuthService;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -40,7 +42,7 @@ public class UserServiceImpl implements UserService {
         Optional<User> duplicateUsername = userRepository.findUserByUsername(user.getUsername());
         if(duplicateUsername.isPresent()) throw new DuplicateDataException("username: @" + user.getUsername()+ " already exists", HttpStatus.CONFLICT, DuplicateDataException.DataType.USERNAME);
 
-        user.setAccountCreation(LocalDate.now());
+        user.setAccountCreation(LocalDateTime.now());
         User savedUser = userRepository.save((user));
         authService.createNewUserAuth(savedUser.getId(),password);
         return savedUser;
@@ -48,7 +50,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserById(UUID id) {
-        return userRepository.getReferenceById(id);
+        return userRepository.findById(id).orElseThrow();
     }
 
     @Override
@@ -86,8 +88,14 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void followUsers(UUID follower, Set<UUID> usersFollowed) {
-        User followerFetched = userRepository.getReferenceById(follower);
-        Set<User> usersFollowedFetched = new HashSet<>(usersFollowed.stream().map(userRepository::getReferenceById).toList());
+        Optional<User> followerOptional = userRepository.findById(follower);
+
+        if(followerOptional.isEmpty()){
+            throw new EntityNotFoundException("User: " + follower + " does not exist");
+        }
+
+        User followerFetched = followerOptional.get();
+        Set<User> usersFollowedFetched = new HashSet<>(usersFollowed.stream().map(id -> userRepository.findById(id).orElseThrow()).toList());
         for (User userFollowed : usersFollowedFetched){
             followerFetched.followUser(userFollowed);
             userFollowed.addFollower(followerFetched);
@@ -101,12 +109,20 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void unfollowUsers(UUID unfollower, Set<UUID> usersUnfollowed) {
-        User unfollowerFetched = userRepository.getReferenceById(unfollower);
+        Optional<User> unfollowerOptional = userRepository.findById(unfollower);
 
-        Set<User> usersUnfollowedFetched = new HashSet<>(usersUnfollowed.stream().map(userRepository::getReferenceById).toList());
+        if(unfollowerOptional.isEmpty()){
+            throw new EntityNotFoundException("User: " + unfollower + " does not exist");
+        }
+        User unfollowerFetched = unfollowerOptional.get();
+
+        Set<User> usersUnfollowedFetched = new HashSet<>(usersUnfollowed.stream().map(id -> userRepository.findById(id).orElseThrow()).toList());
         for (User userUnfollowed : usersUnfollowedFetched){
-            unfollowerFetched.followUser(userUnfollowed);
-            userUnfollowed.addFollower(unfollowerFetched);
+            if(userUnfollowed.getId() == unfollower){
+                throw new BadRequestException("Cannot unfollow yourself" ,HttpStatus.BAD_REQUEST);
+            }
+            unfollowerFetched.unfollowUser(userUnfollowed);
+            userUnfollowed.removeFollower(unfollowerFetched);
         }
 
         userRepository.save(unfollowerFetched);
@@ -121,9 +137,10 @@ public class UserServiceImpl implements UserService {
         Set<User> blockedUsersFetched = new HashSet<>(blockedUsers.stream().map(userRepository::getReferenceById).toList());
 
         for (User blockedUser : blockedUsersFetched){
-            blocker.addBlockedUser(blockedUser);
+            blocker.blockUser(blockedUser);
         }
 
+        userRepository.save(blocker);
     }
 
     @Override
@@ -132,10 +149,11 @@ public class UserServiceImpl implements UserService {
 
         Set<User> unblockedUsersFetched = new HashSet<>(unblockedUsers.stream().map(userRepository::getReferenceById).toList());
 
-        for (User blockedUser : unblockedUsersFetched){
-            unblocker.addBlockedUser(blockedUser);
+        for (User unblockedUser : unblockedUsersFetched){
+            unblocker.unblockUser(unblockedUser);
         }
 
+        userRepository.save(unblocker);
     }
 
     @Override

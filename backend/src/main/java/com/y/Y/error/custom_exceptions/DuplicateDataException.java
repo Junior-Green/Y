@@ -7,7 +7,8 @@ public class DuplicateDataException extends CustomException {
     public enum DataType {
         USERNAME,
         USER_EMAIL,
-        USER_PHONE_NUMBER
+        USER_PHONE_NUMBER,
+        USER
     }
 
     final DataType dataType;

@@ -11,7 +11,7 @@
 	<groupId>com.y</groupId>
 	<artifactId>Y</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Y</name>
+	<hashtag>Y</hashtag>
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>22</java.version>

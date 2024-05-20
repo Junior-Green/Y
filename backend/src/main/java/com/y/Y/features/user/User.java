@@ -1,19 +1,23 @@
 package com.y.Y.features.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.y.Y.error.custom_exceptions.DuplicateDataException;
 import com.y.Y.features.auth.Auth;
 import com.y.Y.features.user.user_details.CustomUserDetails;
 import com.y.Y.features.user.user_profile.UserProfile;
 import jakarta.persistence.*;
 import org.hibernate.annotations.UuidGenerator;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
 @Table(name = "\"User\"")
-public class User implements CustomUserDetails, UserProfile {
+public class User implements CustomUserDetails{
 
     @Id
     @GeneratedValue
@@ -39,15 +43,17 @@ public class User implements CustomUserDetails, UserProfile {
     private LocalDate birthday;
 
     @Column(nullable = false, updatable = false)
-    private LocalDate accountCreation;
+    private LocalDateTime accountCreation;
 
     @Column(unique = true)
     private String phoneNumber;
 
     @Column(nullable = false)
-    private boolean isVerified;
+    private boolean isVerified = false;
 
+    @Column(nullable = false)
     private String displayName;
+
     private String websiteUrl;
     private String location;
     private String gender;
@@ -62,7 +68,7 @@ public class User implements CustomUserDetails, UserProfile {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "blocked_user_id")
     )
-    private Set<User> blockedUsers;
+    private Set<User> blockedUsers = new HashSet<>();
 
     @ManyToMany
     @JoinTable(
@@ -70,7 +76,7 @@ public class User implements CustomUserDetails, UserProfile {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "follower_id")
     )
-    private Set<User> followers;
+    private Set<User> followers = new HashSet<>();
 
     @ManyToMany
     @JoinTable(
@@ -78,7 +84,7 @@ public class User implements CustomUserDetails, UserProfile {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "following_id")
     )
-    private Set<User> following;
+    private Set<User> following = new HashSet<>();
 
     public User() {}
 
@@ -97,15 +103,13 @@ public class User implements CustomUserDetails, UserProfile {
         this.lastName = lastName;
         this.email = email;
         this.birthday = birthday;
-        this.accountCreation = LocalDate.now();
+        this.accountCreation = LocalDateTime.now();
         this.phoneNumber = phoneNumber;
         this.gender = gender;
         this.bio = bio;
     }
 
-    public UUID getId() {
-        return id;
-    }
+    public UUID getId() { return id; }
 
     public void setId(UUID id) {
         this.id = id;
@@ -151,7 +155,6 @@ public class User implements CustomUserDetails, UserProfile {
         this.email = email;
     }
 
-    @Override
     public LocalDate getBirthday() {
         return birthday;
     }
@@ -160,11 +163,11 @@ public class User implements CustomUserDetails, UserProfile {
         this.birthday = birthday;
     }
 
-    public LocalDate getAccountCreation() {
+    public LocalDateTime getAccountCreation() {
         return accountCreation;
     }
 
-    public void setAccountCreation(LocalDate accountCreation) {
+    public void setAccountCreation(LocalDateTime accountCreation) {
         this.accountCreation = accountCreation;
     }
 
@@ -196,6 +199,18 @@ public class User implements CustomUserDetails, UserProfile {
         return websiteUrl;
     }
 
+    public Set<UUID> getFollowersIds() {
+        return new HashSet<>(getFollowers().stream().map(User::getId).toList());
+    }
+
+    public Set<UUID> getFollowingIds() {
+        return new HashSet<>(getFollowing().stream().map(User::getId).toList());
+    }
+
+    public Set<UUID> getBlockedUsersIds() {
+        return new HashSet<>(getBlockedUsers().stream().map(User::getId).toList());
+    }
+
     public void setWebsiteUrl(String url) {
         this.websiteUrl = url;
     }
@@ -220,64 +235,73 @@ public class User implements CustomUserDetails, UserProfile {
         this.bio = bio;
     }
 
-
-    public Set<User> getBlockedUsers() {
-        return blockedUsers;
-    }
-
-    public void setBlockedUsers(Set<User> blockedUsers) {
-        this.blockedUsers = blockedUsers;
-    }
-
-    public void addBlockedUser(User blockedUser) {
-        if (blockedUsers == null) {blockedUsers = new HashSet<>();}
-        blockedUsers.add(blockedUser);
-    }
-
-    public Set<User> getFollowing() {
-        return following;
-    }
-
-    public void setFollowing(Set<User> following) {
-        this.following = following;
-    }
-
     public void followUser(User user) {
         if (following == null) {following = new HashSet<>();}
+        if (following.contains(user)) throw new DuplicateDataException(HttpStatus.BAD_REQUEST, DuplicateDataException.DataType.USER);
+
         following.add(user);
     }
 
     public void unfollowUser(User user){
         if(following == null || following.isEmpty()) return;
+        if(!following.contains(user)) throw new NoSuchElementException("Cannot unfollow user. User: " + user.getId() + " is not being followed.");
         following.remove(user);
-    }
-
-    public Set<User> getFollowers() {
-        return followers;
-    }
-
-    public void setFollowers(Set<User> followers) {
-        this.followers = followers;
     }
 
     public void addFollower(User newFollower) {
         if (followers == null) {followers = new HashSet<>();}
+        if (followers.contains(newFollower)) throw new DuplicateDataException(HttpStatus.BAD_REQUEST, DuplicateDataException.DataType.USER);
         followers.add(newFollower);
     }
 
     public void removeFollower(User follower){
         if(followers == null || followers.isEmpty()) return;
+        if(!followers.contains(follower)) throw new NoSuchElementException("Cannot remove follower. User: " + follower.getId() + " is not following.");
+
         followers.remove(follower);
     }
 
     public void blockUser(User user) {
         if (blockedUsers == null) {blockedUsers = new HashSet<>();}
+        if (blockedUsers.contains(user)) throw new DuplicateDataException(HttpStatus.BAD_REQUEST, DuplicateDataException.DataType.USER);
+
         blockedUsers.add(user);
     }
 
     public void unblockUser(User user) {
         if(blockedUsers == null || blockedUsers.isEmpty()) return;
+        if(!blockedUsers.contains(user)) throw new NoSuchElementException("Cannot unblock user. User: " + user.getId() + " is not blocked.");
         blockedUsers.remove(user);
+    }
+
+    @JsonIgnore
+    public void setFollowing(Set<User> following) {
+        this.following = following;
+    }
+
+    @JsonIgnore
+    public Set<User> getBlockedUsers() {
+        return blockedUsers;
+    }
+
+    @JsonIgnore
+    public void setBlockedUsers(Set<User> blockedUsers) {
+        this.blockedUsers = blockedUsers;
+    }
+
+    @JsonIgnore
+    public void setFollowers(Set<User> followers) {
+        this.followers = followers;
+    }
+
+    @JsonIgnore
+    public Set<User> getFollowers() {
+        return followers;
+    }
+
+    @JsonIgnore
+    public Set<User> getFollowing() {
+        return following;
     }
 
     @JsonIgnore

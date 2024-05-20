@@ -9,6 +9,24 @@
     <value-preview-text-wrapping value="false" />
     <value-preview-pinned value="false" />
   </component>
+  <component name="DBNavigator.Project.DataExportManager">
+    <export-instructions>
+      <create-header value="false" />
+      <friendly-headers value="false" />
+      <quote-values-containing-separator value="false" />
+      <quote-all-values value="true" />
+      <value-separator value="," />
+      <begin-quote value="&quot;" />
+      <end-quote value="&quot;" />
+      <file-name value="user_ids.csv" />
+      <file-location value="C:\Users\junio\Downloads" />
+      <scope value="GLOBAL" />
+      <destination value="FILE" />
+      <format value="CSV" />
+      <charset value="UTF-8" />
+      <charset value="UTF-8" />
+    </export-instructions>
+  </component>
   <component name="DBNavigator.Project.DatabaseBrowserManager">
     <autoscroll-to-editor value="false" />
     <autoscroll-from-editor value="true" />
@@ -17,7 +35,7 @@
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="ca91ccae-30cb-45f3-b39f-121590dd8520">
-      <console name="Connection" type="STANDARD" schema="public" session="Main"><![CDATA[select * from "user" where username = 'juniorgreen'
+      <console name="Connection" type="STANDARD" schema="public" session="Main"><![CDATA[select id from "user"
 
 select * from "auth"
 
@@ -26,6 +44,10 @@ delete from "user" where username = 'juniorgreen'
 delete from "auth" where username = 'juniorgreen'
 
 select * from session 
+
+select * from hashtag_posts
+
+select * from post
 
 DELETE FROM "auth"
 WHERE user_id IN (
@@ -465,7 +487,7 @@ WHERE user_id IN (
     </code-completion-settings>
     <execution-engine-settings>
       <statement-execution>
-        <fetch-block-size value="100" />
+        <fetch-block-size value="1000" />
         <execution-timeout value="20" />
         <debug-execution-timeout value="600" />
         <focus-result value="false" />

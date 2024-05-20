@@ -28,7 +28,7 @@ public class PostController {
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<Post> getPostById(@PathVariable UUID postId){
+    public ResponseEntity<Post> getPostById(@PathVariable(value = "id") UUID postId){
         return ResponseEntity.ok(postService.getPostById(postId));
     }
 
@@ -39,8 +39,8 @@ public class PostController {
     }
 
     @GetMapping("/likes/{id}")
-    public ResponseEntity<List<Like>> getAllPostLikes(@PathVariable("id") UUID id){
-        return ResponseEntity.ok(likeService.getLikesByPostId(id));
+    public ResponseEntity<List<Like>> getAllPostLikes(@PathVariable("id") UUID postId){
+        return ResponseEntity.ok(likeService.getLikesByPostId(postId));
     }
 
     @GetMapping("/hashtag/{hashtag}")
@@ -49,26 +49,40 @@ public class PostController {
     }
 
     @PostMapping()
-    public ResponseEntity<Post> createPost(@RequestBody CreatePostRequest request, @RequestParam(value = "qoutedId", required = false) UUID qoutedPostId){
+    public ResponseEntity<Post> createPost(@RequestBody String content, @RequestParam(value = "qoutedId", required = false) UUID qoutedPostId){
         Authentication authenticatedUser = SecurityContextHolder.getContext().getAuthentication();
 
         if(qoutedPostId != null){
-            return ResponseEntity.ok(postService.createQoutePost((UUID) authenticatedUser.getPrincipal(), qoutedPostId, request.getPost()));
+            return ResponseEntity.ok(postService.createQoutePost((UUID) authenticatedUser.getPrincipal(), qoutedPostId, content));
         }
 
-        return ResponseEntity.ok(postService.createPost((UUID) authenticatedUser.getPrincipal(),request.getPost()));
+        return ResponseEntity.ok(postService.createPost((UUID) authenticatedUser.getPrincipal(), content));
+    }
+
+    @PostMapping(path = "/like/{id}")
+    public ResponseEntity<String> likePost(@PathVariable("id") UUID postId){
+        Authentication authenticatedUser = SecurityContextHolder.getContext().getAuthentication();
+        postService.likePost((UUID) authenticatedUser.getPrincipal(), postId);
+        return ResponseEntity.ok("Post " + postId + " liked.");
     }
 
     @PostMapping(path = "/{id}")
-    public ResponseEntity<Post> createReply(@PathVariable UUID parentPostId, @RequestBody CreatePostRequest request){
+    public ResponseEntity<Post> createReply(@PathVariable("id") UUID parentPostId, @RequestBody String content){
         Authentication authenticatedUser = SecurityContextHolder.getContext().getAuthentication();
-        return ResponseEntity.ok(postService.addReply((UUID) authenticatedUser.getPrincipal(),parentPostId,request.getPost()));
+        return ResponseEntity.ok(postService.addReply((UUID) authenticatedUser.getPrincipal(),parentPostId, content));
     }
 
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<String> deletePost(@PathVariable UUID postId){
         postService.deletePostById(postId);
         return ResponseEntity.ok("Post successfully deleted.");
+    }
+
+    @DeleteMapping(path = "/unlike/{id}")
+    public ResponseEntity<String> unlikePost(@PathVariable("id") UUID postId){
+        Authentication authenticatedUser = SecurityContextHolder.getContext().getAuthentication();
+        postService.unlikePost((UUID) authenticatedUser.getPrincipal(), postId);
+        return ResponseEntity.ok("Post " + postId + " unliked.");
     }
 
 }

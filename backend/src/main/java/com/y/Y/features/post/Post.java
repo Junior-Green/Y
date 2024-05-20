@@ -2,13 +2,17 @@ package com.y.Y.features.post;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.y.Y.error.custom_exceptions.DuplicateDataException;
 import com.y.Y.features.hashtag.HashTag;
+import com.y.Y.features.like.Like;
 import com.y.Y.features.user.User;
 import jakarta.persistence.*;
 import org.hibernate.annotations.UuidGenerator;
+import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
 
@@ -44,8 +48,8 @@ public class Post {
     @Column(nullable = false, updatable = false)
     private boolean isQoutePost = false;
 
-    @ManyToMany(mappedBy = "posts", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<HashTag> hashtags;
+    @OneToMany(mappedBy = "likedPost",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Like> likes;
 
     public Post() {}
 
@@ -79,16 +83,10 @@ public class Post {
         this.createdAt = createdAt;
     }
 
-    public Post getParent() {
-        return parent;
-    }
+    public UUID getParentId() {return parent == null ? null : parent.id ;}
 
     public Set<Post> getReplies() {
         return replies;
-    }
-
-    public Set<String> getHashtags() {
-        return new HashSet<>(hashtags.stream().map(HashTag::getName).toList());
     }
 
     public void setReplies(Set<Post> replies) {
@@ -97,15 +95,39 @@ public class Post {
 
     public void addReply(Post reply) {
         if (replies == null) {replies = new HashSet<>();}
-        replies.add(reply);
         reply.setParent(this);
         reply.setIsQoutePost(false);
+        replies.add(reply);
+    }
+
+    public void addLike(Like like) {
+        if (likes == null) {likes = new HashSet<>();}
+        if(likes.stream().noneMatch(l -> l.getLikedByUserId() == like.getLikedByUserId())) {
+            likes.add(like);
+            return;
+        }
+        throw new DuplicateDataException(HttpStatus.BAD_REQUEST, DuplicateDataException.DataType.USER);
+    }
+
+    public void removeLike(Like like) {
+        if (likes == null) {likes = new HashSet<>();}
+        if(!likes.contains(like)){
+            throw new NoSuchElementException("This post is not liked by user: " + like.getLikedPostId());
+        }
+        likes.remove(like);
     }
 
     public UUID getAuthorId(){return author.getId();}
 
     public boolean isQoutePost() {
         return isQoutePost;
+    }
+
+    public Set<Like> getLikes(){return likes;}
+
+    @JsonIgnore
+    public Post getParent() {
+        return parent;
     }
 
     @JsonIgnore

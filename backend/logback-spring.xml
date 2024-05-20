@@ -1,7 +1,7 @@
 <configuration>
     <include resource="org/springframework/boot/logging/logback/defaults.xml" />
 
-    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+    <appender hashtag="console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>${CONSOLE_LOG_PATTERN}</pattern>
         </encoder>

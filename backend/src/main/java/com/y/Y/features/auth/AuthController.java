@@ -74,7 +74,7 @@ public class AuthController {
     }
 
     @PostMapping(path = "/logout")
-    public ResponseEntity<String> logout(@RequestBody() LoginRequest credentials, HttpServletRequest request, HttpServletResponse response)
+    public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response)
     {
         Cookie[] cookies = request.getCookies();
 
