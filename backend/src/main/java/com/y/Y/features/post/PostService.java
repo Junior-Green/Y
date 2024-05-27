@@ -1,5 +1,6 @@
 package com.y.Y.features.post;
 
+import com.y.Y.features.post.controller_requests.PaginatedPostRequest;
 import jakarta.persistence.EntityNotFoundException;
 
 import java.util.List;
@@ -22,4 +23,8 @@ public interface PostService {
     void likePost(UUID likerId, UUID postId);
 
     void unlikePost(UUID unlikerId, UUID postId);
+
+    PaginatedPostRequest getPaginatedPosts(int pageNumber);
+
+    PaginatedPostRequest getPaginatedFollowersPosts(UUID userId, int pageNumber);
 }

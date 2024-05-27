@@ -41,13 +41,17 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<UserProfile> getUserProfileByUsername(
+    public ResponseEntity<UserProfile> getUserProfile(
             @RequestParam(value = "id", required = false) UUID id,
             @RequestParam(value = "email", required = false) String email,
-            @RequestParam(value = "phone", required = false) String phoneNumber) {
+            @RequestParam(value = "phone", required = false) String phoneNumber,
+            @RequestParam(value = "username", required = false) String username) {
 
         if (id != null){
             return ResponseEntity.ok().body(new UserProfileImpl(userService.getUserById(id)));
+        }
+        if(username != null){
+            return ResponseEntity.ok(new UserProfileImpl(userService.getUserByUsername(username)));
         }
         if (email != null) {
             return ResponseEntity.ok().body(new UserProfileImpl(userService.getUserByEmail(email)));
@@ -55,6 +59,7 @@ public class UserController {
         if(phoneNumber != null){
             return ResponseEntity.ok().body(new UserProfileImpl(userService.getUserByPhoneNumber(phoneNumber)));
         }
+
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 

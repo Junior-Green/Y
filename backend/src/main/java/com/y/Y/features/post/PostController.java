@@ -1,13 +1,16 @@
 package com.y.Y.features.post;
 
+import com.y.Y.error.custom_exceptions.BadRequestException;
 import com.y.Y.features.hashtag.HashTagService;
 import com.y.Y.features.like.Like;
 import com.y.Y.features.like.LikeService;
-import com.y.Y.features.post.controller_requests.CreatePostRequest;
+import com.y.Y.features.post.controller_requests.PaginatedPostRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
@@ -25,6 +28,20 @@ public class PostController {
         this.postService = postService;
         this.likeService = likeService;
         this.hashTagService = hashTagService;
+    }
+
+    @GetMapping
+    public ResponseEntity<PaginatedPostRequest> getPaginatedPosts(@RequestParam("page") int pageNumber){
+        if(pageNumber < 0) throw new BadRequestException("request param (page) must be greater than 0", HttpStatus.BAD_REQUEST);
+        return ResponseEntity.ok(postService.getPaginatedPosts(pageNumber));
+    }
+
+    @GetMapping("/followers")
+    public ResponseEntity<PaginatedPostRequest> getPaginatedFollowersPosts(@RequestParam("page") int pageNumber){
+        if(pageNumber < 0) throw new BadRequestException("request param (page) must be greater than 0", HttpStatus.BAD_REQUEST);
+
+        Authentication authenticatedUser = SecurityContextHolder.getContext().getAuthentication();
+        return ResponseEntity.ok(postService.getPaginatedFollowersPosts((UUID) authenticatedUser.getPrincipal(),pageNumber));
     }
 
     @GetMapping(path = "/{id}")
@@ -78,7 +95,7 @@ public class PostController {
         return ResponseEntity.ok("Post successfully deleted.");
     }
 
-    @DeleteMapping(path = "/unlike/{id}")
+    @DeleteMapping(path = "/like/{id}")
     public ResponseEntity<String> unlikePost(@PathVariable("id") UUID postId){
         Authentication authenticatedUser = SecurityContextHolder.getContext().getAuthentication();
         postService.unlikePost((UUID) authenticatedUser.getPrincipal(), postId);

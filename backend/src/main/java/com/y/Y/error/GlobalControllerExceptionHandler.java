@@ -11,9 +11,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.session.SessionAuthenticationException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 import java.util.NoSuchElementException;
 
@@ -41,8 +43,8 @@ public class GlobalControllerExceptionHandler {
         return ResponseEntity.status(e.getStatus()).body(new ApiError(e.getStatus(),e));
     }
 
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<ApiError> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
+    @ExceptionHandler({MissingServletRequestParameterException.class, MethodArgumentTypeMismatchException.class, MissingServletRequestPartException.class})
+    public ResponseEntity<ApiError> handleMethodArgumentTypeMismatchException(Exception e) {
         logException(e);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiError(HttpStatus.BAD_REQUEST,e));
     }
@@ -60,7 +62,7 @@ public class GlobalControllerExceptionHandler {
     }
 
     @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<ApiError> handleBadRequestException(DuplicateDataException e) {
+    public ResponseEntity<ApiError> handleBadRequestException(BadRequestException e) {
         logException(e);
         return ResponseEntity.status(e.getStatus()).body(new ApiError(e.getStatus(),e));
     }
@@ -90,7 +92,7 @@ public class GlobalControllerExceptionHandler {
     }
 
 
-    private void logException(RuntimeException e) {
+    private void logException(Exception e) {
         logger.error(e.getMessage());
         logger.error(e.getLocalizedMessage());
     }

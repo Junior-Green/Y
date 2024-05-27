@@ -6,13 +6,21 @@ import com.y.Y.features.hashtag.HashTag;
 import com.y.Y.features.hashtag.HashTagRepository;
 import com.y.Y.features.like.Like;
 import com.y.Y.features.like.LikeRepository;
+import com.y.Y.features.post.controller_requests.PaginatedPostRequest;
 import com.y.Y.features.user.User;
 import com.y.Y.features.user.UserRepository;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
@@ -26,18 +34,23 @@ import static com.y.Y.utils.UtilityService.hasHashtag;
 public class PostServiceImpl implements PostService{
 
     private static final Logger log = LoggerFactory.getLogger(PostServiceImpl.class);
+    private static final int PAGE_SIZE = 10;
+    private static final int MAX_PAGES = 15;
+
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final HashTagRepository hashTagRepository;
     private final LikeRepository likeRepository;
+    private final EntityManager entityManager;
 
 
     @Autowired
-    public PostServiceImpl(PostRepository postRepository, UserRepository userRepository, HashTagRepository hashTagRepository, LikeRepository likeRepository) {
+    public PostServiceImpl(PostRepository postRepository, UserRepository userRepository, HashTagRepository hashTagRepository, LikeRepository likeRepository, EntityManager entityManager) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.hashTagRepository = hashTagRepository;
         this.likeRepository = likeRepository;
+        this.entityManager = entityManager;
     }
 
     @Override
@@ -175,6 +188,65 @@ public class PostServiceImpl implements PostService{
         throw new EntityNotFoundException("User: " + unlikerId + " did not like post: " + postId);
     }
 
+    @Override
+    @Transactional
+    public PaginatedPostRequest getPaginatedPosts(int pageNumber) {
+        PageRequest pageRequest =  PageRequest.of(pageNumber,PAGE_SIZE,Sort.by(Sort.Direction.DESC,"createdAt"));
+        Page<Post> page = postRepository.getPaginatedPosts(pageRequest);
+
+        PaginatedPostRequest req = new PaginatedPostRequest();
+        if(pageNumber == MAX_PAGES || !page.hasNext()){
+            req.setNextPage(null);
+        }
+        else {
+            req.setNextPage(pageNumber + 1);
+        }
+
+        if(pageNumber - 1 < 1 || !page.hasPrevious()){
+            req.setPreviousPage(null);
+        }
+        else{
+            req.setPreviousPage(pageNumber - 1);
+        }
+
+        req.setPosts(page.stream().toList());
+        return req;
+    }
+
+    @Override
+    @Transactional
+    public PaginatedPostRequest getPaginatedFollowersPosts(UUID userId, int pageNumber) {
+       Optional<User> userOptional = userRepository.findById(userId);
+       if(userOptional.isEmpty()){
+           throw new EntityNotFoundException("User: " + userId + " does not exist");
+       }
+
+       List<UUID> followerIds = userOptional.get().getFollowersIds().stream().toList();
+
+       PageRequest pageRequest =  PageRequest.of(pageNumber,PAGE_SIZE,Sort.by(Sort.Direction.DESC,"createdAt"));
+       Page<Post> page = postRepository.getPaginatedFollowersPosts(pageRequest,followerIds);
+
+        PaginatedPostRequest req = new PaginatedPostRequest();
+        if(pageNumber == MAX_PAGES || !page.hasNext()){
+            req.setNextPage(null);
+        }
+        else {
+            req.setNextPage(pageNumber + 1);
+        }
+
+        if(pageNumber - 1 < 1 || !page.hasPrevious()){
+            req.setPreviousPage(null);
+        }
+        else{
+            req.setPreviousPage(pageNumber - 1);
+        }
+
+
+        req.setPosts(page.getContent());
+        return req;
+    }
+
+    @Transactional
     private void createHashtags(Post post){
         if(hasHashtag(post.getContent())){
             List<String> hashtags = extractHashtagNames(post.getContent()).stream().toList();

@@ -35,7 +35,7 @@
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="ca91ccae-30cb-45f3-b39f-121590dd8520">
-      <console name="Connection" type="STANDARD" schema="public" session="Main"><![CDATA[select id from "user"
+      <console name="Connection" type="STANDARD" schema="public" session="Main"><![CDATA[select * from "user" order by account_creation desc limit 10 offset 10
 
 select * from "auth"
 
@@ -47,7 +47,7 @@ select * from session
 
 select * from hashtag_posts
 
-select * from post
+select * from Post p where p.parent_post_id is null
 
 DELETE FROM "auth"
 WHERE user_id IN (
@@ -61,7 +61,9 @@ WHERE user_id IN (
     <last-used-providers />
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files />
+    <open-files>
+      <object connection-id="ca91ccae-30cb-45f3-b39f-121590dd8520" object-ref="consoles/Connection" />
+    </open-files>
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="ca91ccae-30cb-45f3-b39f-121590dd8520">

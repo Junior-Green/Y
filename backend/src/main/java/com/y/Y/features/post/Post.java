@@ -3,7 +3,6 @@ package com.y.Y.features.post;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.y.Y.error.custom_exceptions.DuplicateDataException;
-import com.y.Y.features.hashtag.HashTag;
 import com.y.Y.features.like.Like;
 import com.y.Y.features.user.User;
 import jakarta.persistence.*;
@@ -11,10 +10,7 @@ import org.hibernate.annotations.UuidGenerator;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "Post")
@@ -27,15 +23,15 @@ public class Post {
     @Column(nullable = false, unique = true, updatable = false)
     private UUID id;
 
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="author_id", nullable = false, updatable = false)
     private User author;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "parent_post_id", updatable = false)
     private Post parent;
 
-    @OneToMany(mappedBy = "parent",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "parent",fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Post> replies;
 
     @Column(nullable = false, length = MAX_POST_LENGTH)
@@ -85,9 +81,7 @@ public class Post {
 
     public UUID getParentId() {return parent == null ? null : parent.id ;}
 
-    public Set<Post> getReplies() {
-        return replies;
-    }
+    public List<UUID> getReplyIds() {return replies.stream().map(Post::getId).toList();}
 
     public void setReplies(Set<Post> replies) {
         this.replies = replies;
@@ -124,6 +118,11 @@ public class Post {
     }
 
     public Set<Like> getLikes(){return likes;}
+
+    @JsonIgnore
+    public Set<Post> getReplies() {
+        return replies;
+    }
 
     @JsonIgnore
     public Post getParent() {
