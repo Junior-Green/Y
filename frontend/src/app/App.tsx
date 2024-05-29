@@ -4,8 +4,8 @@ import AppRouter from './routes'
 function App() {
 
   return (
-    <div className='w-full h-full'>
-      <h1>HJELLO</h1>
+    <div className='w-full h-full bg-black'>
+      
       <AppRouter></AppRouter>
     </div>
   )

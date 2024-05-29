@@ -41,10 +41,29 @@ export type User = {
     displayName: string,
     websiteUrl: string | null,
     location: string | null,
-    isVerifided: boolean,
+    isVerified: boolean,
     gender: string | null,
     bio: string | null,
 }
+
+export type NewUserRequest = Omit<User, "id" | "accountCreation" | "websiteUrl" | "location" | "isVerified" | "bio">
+
+export type UpdateUserRequest = {
+    username?: string,
+    firstName?: string,
+    middleName?: string,
+    lastName?: string,
+    email?: string,
+    birthday?: Date,
+    phoneNumber?: string,
+    displayName?: string,
+    websiteUrl?: string,
+    location?: string,
+    gender?: string,
+    bio?: string,
+}
+
+
 
 export type UserProfile = {
     id: string,

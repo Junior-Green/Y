@@ -81,9 +81,9 @@ public class UserServiceImpl implements UserService {
         if (optionalUser.isEmpty()){
             throw new EntityNotFoundException("User id: " + id + " does not exist.");
         }
+
         userRepository.deleteById(id);
     }
-
 
     @Override
     @Transactional

@@ -46,7 +46,7 @@ export async function PUT(endpoint: string, body: any): Promise<any> {
 
 export async function DELETE(endpoint: string): Promise<any> {
     const response = await fetch(`${process.env.REACT_APP_API_URL}${endpoint}`, {
-        method: 'PUT',
+        method: 'DELETE',
     })
 
     if (response.status !== 200) {

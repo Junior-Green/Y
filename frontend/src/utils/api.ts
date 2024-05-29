@@ -1,5 +1,5 @@
-import { DELETE, GET, POST } from "./fetch"
-import { Page, Post, User } from "./types"
+import { DELETE, GET, POST, PUT } from "./fetch"
+import { Like, NewUserRequest, Page, Post, UpdateUserRequest, User, UserProfile } from "./types"
 
 export  const getPaginatedPosts = async (pageNumber: number): Promise<Page<Post>> => {
     const data: Page<Post> = await GET(`/api/posts?page=${pageNumber}`)
@@ -25,6 +25,23 @@ export const getPostsFromHashtag = async (hashtag: string): Promise<Post[]> => {
     const data: Post[] = await GET(`/api/posts/hashtag/${hashtag}`)
     return data;
 }
+
+export const getAuthenticatedUser = async (): Promise<User> => {
+    const data: User = await GET(`/api/users/me`);
+    return data;
+}
+
+export const getUserProfile = async (identifier: "id" | "email" | "phone" | "username", value: string): Promise<UserProfile> => {
+    const data: UserProfile = await GET(`/api/users?${identifier}=${value}`);
+    return data;
+}
+
+export const getAllLikesByUser = async (userId: string): Promise<Like[]> => { 
+    const data: Like[] = await GET(`/api/users/likes/${userId}`);
+    return data;
+}
+
+// ------------------------------MUTATING-------------------------------
 
 export const createPost = async (content: string): Promise<Post> => {
     const data: Post = await POST("/api/posts", content);
@@ -56,7 +73,37 @@ export const unlikePost = async (postId: string): Promise<string> => {
     return data
 }
 
-export const getAuthenticatedUser = async (): Promise<User> => {
-    const data: User = await GET(`/api/users/me`);
+
+export const createNewUser = async (userData: NewUserRequest): Promise<User> => {
+    const data: User = await POST(`/api/users/register`, userData);
     return data;
+}
+
+export const followUser = async (userId: string): Promise<string> => {
+    const data: string = await POST(`/api/users/follow/${userId}`, {});
+    return data;
+}
+
+export const blockUser = async (userId: string): Promise<string> => {
+    const data: string = await POST(`/api/users/block/${userId}`, {});
+    return data;
+}
+
+export const updateUser = async (userData: UpdateUserRequest): Promise<User> => {
+    const data: User = await PUT("/api/users/me", userData);
+    return data;
+}
+
+export const unfollowUser = async (userId: string): Promise<string> => {
+    const data: string = await DELETE(`/api/users/unfollow/${userId}`);
+    return data;
+}
+
+export const unblockUser = async (userId: string): Promise<string> => {
+    const data: string = await DELETE(`/api/users/unblock/${userId}`);
+    return data;
+}
+
+export const deleteUser = async (): Promise<void> => {
+    await DELETE("/api/users/me");
 }

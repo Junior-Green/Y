@@ -60,10 +60,7 @@ public class UserController {
             return ResponseEntity.ok().body(new UserProfileImpl(userService.getUserByPhoneNumber(phoneNumber)));
         }
 
-
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-
-
     }
 
     @GetMapping("/likes/{id}")
@@ -90,12 +87,13 @@ public class UserController {
         return  ResponseEntity.ok("User: " + id + " blocked.");
     }
 
-    @PutMapping(path = "/{id}")
-    public ResponseEntity<User> updateUser(
-            @PathVariable("id") UUID id,
+    @PutMapping(path = "/me")
+    public ResponseEntity<User> updateAuthenticatedUser(
             @RequestBody() User user
             ){
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(userService.updateUser(id, user));
+        Authentication authenticatedUser = SecurityContextHolder.getContext().getAuthentication();
+
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(userService.updateUser((UUID) authenticatedUser.getPrincipal(), user));
     }
 
     @DeleteMapping(path = "/unfollow/{id}")
@@ -112,9 +110,10 @@ public class UserController {
         return  ResponseEntity.ok("User: " + id + " unblocked.");
     }
 
-    @DeleteMapping()
-    public void deleteUser(@RequestParam("id") UUID id){
-        userService.deleteUser(id);
+    @DeleteMapping(path = "/me")
+    public void deleteUser(){
+        Authentication authenticatedUser = SecurityContextHolder.getContext().getAuthentication();
+        userService.deleteUser((UUID) authenticatedUser.getPrincipal());
     }
 
 }
