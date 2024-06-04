@@ -1,6 +1,5 @@
-import { store } from "@/stores/store";
+import { ThemeProvider, createTheme } from "@mui/material";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Provider } from "react-redux";
 
 interface AppProviderProps {
     children: React.ReactNode
@@ -8,15 +7,28 @@ interface AppProviderProps {
 
 const queryClient = new QueryClient()
 
+const materialUiTheme = createTheme({
+    palette: {
+        primary: {
+            main: "#1DA1F2"
+        },
+        secondary: {
+            main: "#333639"
+        },
 
+        text: {
+            primary: "white"
+        }
+    }
+})
 
 function AppProvider({ children }: AppProviderProps) {
 
     return (
         <QueryClientProvider client={queryClient}>
-            <Provider store={store}>
+            <ThemeProvider theme={materialUiTheme}>
                 {children}
-            </Provider>
+            </ThemeProvider>
         </QueryClientProvider>
     )
 
