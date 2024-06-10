@@ -7,8 +7,11 @@ const FormInputField = styled((props: TextFieldProps) => (
         InputLabelProps={{
             sx: {
                 color: "#AAB8C2",
-                [`&.${inputLabelClasses.shrink}`]: {
+                [`&.${inputLabelClasses.focused}`]: {
                     color: "#1DA1F2"
+                },
+                [`&.${inputLabelClasses.error}`]: {
+                    color: "#d32f2f"
                 }
             }
         }}
@@ -29,10 +32,14 @@ const FormInputField = styled((props: TextFieldProps) => (
         '&:hover': {
             backgroundColor: 'transparent',
         },
+
         '&.Mui-focused': {
             backgroundColor: 'transparent',
             boxShadow: `${alpha(theme.palette.primary.main, 0.25)} 0 0 0 2px`,
             borderColor: theme.palette.primary.main,
+        },
+        '&.Mui-error': {
+            borderColor: theme.palette.error.main
         },
     },
 }));

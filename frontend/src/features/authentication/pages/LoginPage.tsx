@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import PopUpModal from "../components/PopUpModal/PopUpModal";
+import PopUpModal from "../../../components/PopUpModal/PopUpModal";
 import LoginPageLanding from "../components/LoginPageLanding/LoginPageLanding";
 import CreateAccountModalPage from "../components/CreateAccountModalPage/CreateAccountModalPage";
 import SignInModalPage from "../components/SignInModalPage/SignInModalPage";
