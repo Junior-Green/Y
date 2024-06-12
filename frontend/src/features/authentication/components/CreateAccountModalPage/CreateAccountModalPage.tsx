@@ -57,7 +57,3 @@ const CreateAccountModalPage = () => {
 }
 
 export default CreateAccountModalPage;
-
-function isValidPhone(emailOrPhone: string) {
-    throw new Error("Function not implemented.");
-}

@@ -17,6 +17,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.session.DisableEncodeUrlFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -27,12 +30,12 @@ public class SecurityConfiguration{
         @Autowired
         private CustomUserDetailsService userDetailsService;
 
-        public static final String[] PUBLIC_URLS = {"/api/auth/login", "/api/auth/logout", "/api/users/register"};
+        public static final String[] PUBLIC_URLS = {"/api/auth/login", "/api/auth/logout", "/api/users/register", "/api/users"};
 
         @Bean
         public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
                 http
-                        .cors(AbstractHttpConfigurer::disable)
+                        .cors((cors) -> cors.configurationSource(_ -> new CorsConfiguration().applyPermitDefaultValues()))
                         .csrf(AbstractHttpConfigurer::disable)
                         .sessionManagement((sess) -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                         .authorizeHttpRequests((authz) -> authz

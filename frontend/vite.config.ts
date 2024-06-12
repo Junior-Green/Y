@@ -12,5 +12,5 @@ export default defineConfig({
   build: {
     outDir: '../backend/src/main/resources/static', // Output the dist folder to this location
   },
-  envPrefix: 'REACT_APP_',
+  envDir: "./env"
 })

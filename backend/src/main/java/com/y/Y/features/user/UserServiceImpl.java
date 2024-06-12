@@ -33,6 +33,9 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public User addNewUser(User user, String password) {
+        if(user.getEmail() == null && user.getPhoneNumber() == null){
+            throw new BadRequestException("An email or phone number must be provided to register an account", HttpStatus.BAD_REQUEST);
+        }
         Optional<User> duplicateEmail = userRepository.findUserByEmail(user.getEmail());
         if(duplicateEmail.isPresent()) throw new DuplicateDataException("email: " + user.getEmail() + " already exists", HttpStatus.CONFLICT, DuplicateDataException.DataType.USER_EMAIL);
 

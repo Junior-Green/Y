@@ -6,20 +6,25 @@ import { IoIosCheckmarkCircle } from "react-icons/io";
 import { FaCircleXmark } from "react-icons/fa6";
 import debounce from "lodash.debounce"
 import { getUserProfile } from "@/utils/api";
+import { useCallback, useState } from "react";
 
 const PageThreeForm = ({ onSubmit }: PageFormProps<PageThreeInputs>) => {
     const { control, handleSubmit, formState: { errors, isValid } } = useForm<PageThreeInputs>({ mode: "onChange" })
+    const [IsUsernameAvailable, setIsUsernameAvailable] = useState<boolean | undefined>()
 
-    const debounceIsUsernameAvailable = debounce(async (username: string): Promise<boolean> => {
+    const IsUsernameAvailableDebounced = debounce(async (username: string): Promise<boolean> => {
         try {
             const user = await getUserProfile("username", username)
-            return user != null
+            setIsUsernameAvailable(user === null)
+            return user === null
         }
         catch (err) {
+            setIsUsernameAvailable(true)
             return true
         }
+    }, 300, { leading: true })
 
-    }, 300)
+
 
     return (
         <div className="w-full h-full flex flex-col">
@@ -40,7 +45,7 @@ const PageThreeForm = ({ onSubmit }: PageFormProps<PageThreeInputs>) => {
                             error={errors.username !== undefined}
                             InputProps={{
                                 startAdornment: <LuAtSign className="text-white mt-auto mb-3 mr-1" />,
-                                endAdornment: errors != undefined ? <IoIosCheckmarkCircle size={20} className="text-green-500" /> : < FaCircleXmark size={20} className="text-red-500" />,
+                                endAdornment: IsUsernameAvailable ? <IoIosCheckmarkCircle size={20} className="text-green-500" /> : (IsUsernameAvailable !== undefined) && < FaCircleXmark size={20} className="text-red-500" />,
                                 disableUnderline: true
                             }}
                             {...field}
@@ -53,7 +58,9 @@ const PageThreeForm = ({ onSubmit }: PageFormProps<PageThreeInputs>) => {
                                 },
 
                                 validate: async (data) => {
-                                    return debounceIsUsernameAvailable(data)
+                                    const res = await IsUsernameAvailableDebounced(data)
+                                    console.log(res)
+                                    return res || "Username already taken."
                                 }
                             }
                         }

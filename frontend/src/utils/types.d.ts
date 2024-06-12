@@ -74,6 +74,7 @@ export type UpdateUserRequest = {
 
 export type UserProfile = {
     id: string,
+    username: string
     displayName: string,
     location: string | null,
     websiteUrl: string | null,

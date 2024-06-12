@@ -23,6 +23,11 @@ public final class UserProfileImpl implements UserProfile {
     }
 
     @Override
+    public String getUsername() {
+        return user.getUsername();
+    }
+
+    @Override
     public String getLocation() {
         return user.getLocation();
     }

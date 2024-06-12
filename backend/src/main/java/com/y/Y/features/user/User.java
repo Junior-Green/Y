@@ -28,21 +28,22 @@ public class User implements CustomUserDetails{
     @Column(nullable = false, unique = true)
     private String username;
 
-    @Column(nullable = false)
+    @Column
     private String firstName;
 
+    @Column
     private String middleName;
 
-    @Column(nullable = false)
+    @Column
     private String lastName;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String email;
 
     @Column(nullable = false)
     private LocalDate birthday;
 
-    @Column(nullable = false, updatable = false)
+    @Column(updatable = false, nullable = false)
     private LocalDateTime accountCreation;
 
     @Column(unique = true)

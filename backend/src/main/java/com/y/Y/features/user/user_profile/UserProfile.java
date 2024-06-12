@@ -11,6 +11,8 @@ public interface UserProfile {
 
     public UUID getId();
 
+    public String getUsername();
+
     public String getLocation();
 
     public LocalDate getBirthday();
