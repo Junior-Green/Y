@@ -9,9 +9,9 @@
 
 .y-modal {
     position: absolute;
-    width: 600px;
-    height: 650px;
     margin: auto;
+    width: min-content;
+    height: min-content;
     top: 0;
     bottom: 0;
     left: 0;

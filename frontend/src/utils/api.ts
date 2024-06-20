@@ -1,10 +1,10 @@
 import { DELETE, GET, POST, PUT } from "./fetch"
-import { Like, NewUserRequest, Page, Post, UpdateUserRequest, User, UserProfile } from "./types"
+import { Like, LoginCredentials, NewUserRequest, Page, Post, UpdateUserRequest, User, UserProfile } from "./types"
 
 export const getTimeNow = async (): Promise<Date> => {
     const response = await fetch('https://worldtimeapi.org/api/timezone/America/Toronto')
     const time = await response.json()
-    
+
     const date = new Date(time.datetime.replace(/[+-]\d\d:\d\d$/, ''))
     return date
 }
@@ -51,6 +51,14 @@ export const getAllLikesByUser = async (userId: string): Promise<Like[]> => {
 
 // ------------------------------MUTATING-------------------------------
 
+export const login = async (cred: LoginCredentials): Promise<void> => {
+    await POST("/api/auth/login", cred);
+}
+
+export const logout = async (): Promise<void> => {
+    await POST("/api/auth/logout", {});
+}
+
 export const createPost = async (content: string): Promise<Post> => {
     const data: Post = await POST("/api/posts", content);
     return data
@@ -83,7 +91,7 @@ export const unlikePost = async (postId: string): Promise<string> => {
 
 
 export const createNewUser = async (userData: NewUserRequest): Promise<User> => {
-    const data: User = await POST(`/api/users/register`, userData);
+    const data: User = await POST("/api/users/register", userData);
     return data;
 }
 

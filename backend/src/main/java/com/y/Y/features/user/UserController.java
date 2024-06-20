@@ -9,6 +9,7 @@ import com.y.Y.features.user.user_profile.UserProfileImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @RestController
-@CrossOrigin
+@CrossOrigin(originPatterns = "http://localhost:5173")
 @RequestMapping(path = "/api/users")
 public class UserController {
 
@@ -75,17 +76,17 @@ public class UserController {
     }
 
     @PostMapping(path = "/follow/{id}")
-    public ResponseEntity<String> followUser(@PathVariable("id") UUID id){
+    public ResponseEntity<HttpStatus> followUser(@PathVariable("id") UUID id){
         Authentication authenticatedUser = SecurityContextHolder.getContext().getAuthentication();
         userService.followUsers((UUID) authenticatedUser.getPrincipal(), Collections.singleton(id));
-        return ResponseEntity.ok("User: " + id + " followed.");
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @PostMapping(path = "/block/{id}")
-    public ResponseEntity<String> blockUser(@PathVariable("id") UUID id){
+    public ResponseEntity<HttpStatus> blockUser(@PathVariable("id") UUID id){
         Authentication authenticatedUser = SecurityContextHolder.getContext().getAuthentication();
         userService.blockUsers((UUID) authenticatedUser.getPrincipal(), Collections.singleton(id));
-        return  ResponseEntity.ok("User: " + id + " blocked.");
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @PutMapping(path = "/me")
@@ -98,17 +99,17 @@ public class UserController {
     }
 
     @DeleteMapping(path = "/unfollow/{id}")
-    public ResponseEntity<String> unfollowUser(@PathVariable("id") UUID id){
+    public ResponseEntity<HttpStatus> unfollowUser(@PathVariable("id") UUID id){
         Authentication authenticatedUser = SecurityContextHolder.getContext().getAuthentication();
         userService.unfollowUsers((UUID) authenticatedUser.getPrincipal(), Collections.singleton(id));
-        return ResponseEntity.ok("User: " + id + " unfollowed.");
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @DeleteMapping(path = "/unblock/{id}")
-    public ResponseEntity<String> unblockUser(@PathVariable("id") UUID id){
+    public ResponseEntity<HttpStatus> unblockUser(@PathVariable("id") UUID id){
         Authentication authenticatedUser = SecurityContextHolder.getContext().getAuthentication();
         userService.unblockUsers((UUID) authenticatedUser.getPrincipal(), Collections.singleton(id));
-        return  ResponseEntity.ok("User: " + id + " unblocked.");
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @DeleteMapping(path = "/me")

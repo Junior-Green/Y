@@ -16,3 +16,8 @@ export const isValidateDate = (month: number, day: number, year: number): boolea
         date.getMonth() === month &&
         date.getDate() === day;
 }
+
+
+export const refreshPage = () => {
+    window.location.reload();
+}

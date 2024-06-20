@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@CrossOrigin
+@CrossOrigin(originPatterns = "http://localhost:5173")
 @RequestMapping(path = "/api/posts")
 public class PostController {
 
@@ -78,10 +78,10 @@ public class PostController {
     }
 
     @PostMapping(path = "/like/{id}")
-    public ResponseEntity<String> likePost(@PathVariable("id") UUID postId){
+    public ResponseEntity<HttpStatus> likePost(@PathVariable("id") UUID postId){
         Authentication authenticatedUser = SecurityContextHolder.getContext().getAuthentication();
         postService.likePost((UUID) authenticatedUser.getPrincipal(), postId);
-        return ResponseEntity.ok("Post " + postId + " liked.");
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @PostMapping(path = "/{id}")
@@ -91,16 +91,16 @@ public class PostController {
     }
 
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity<String> deletePost(@PathVariable UUID postId){
+    public ResponseEntity<HttpStatus> deletePost(@PathVariable UUID postId){
         postService.deletePostById(postId);
-        return ResponseEntity.ok("Post successfully deleted.");
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @DeleteMapping(path = "/like/{id}")
-    public ResponseEntity<String> unlikePost(@PathVariable("id") UUID postId){
+    public ResponseEntity<HttpStatus> unlikePost(@PathVariable("id") UUID postId){
         Authentication authenticatedUser = SecurityContextHolder.getContext().getAuthentication();
         postService.unlikePost((UUID) authenticatedUser.getPrincipal(), postId);
-        return ResponseEntity.ok("Post " + postId + " unliked.");
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
 }

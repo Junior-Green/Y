@@ -7,9 +7,9 @@ interface AuthenticatedRouteProps {
 }
 
 export default function AuthenticatedRoute({ children }: AuthenticatedRouteProps) {
-    const { data, error, isLoading } = useUser()
+    const { user, error, isLoading } = useUser()
 
-    if (error || !data) {
+    if (error || !user) {
         redirect("/")
     }
 

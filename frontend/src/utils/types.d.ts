@@ -85,3 +85,8 @@ export type UserProfile = {
     followersIds: string[],
     followingIds: string[]
 }
+
+export type LoginCredentials = {
+    username: string,
+    password: string
+}

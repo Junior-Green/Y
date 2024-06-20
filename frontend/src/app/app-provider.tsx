@@ -8,6 +8,7 @@ interface AppProviderProps {
 const queryClient = new QueryClient()
 
 const materialUiTheme = createTheme({
+
     palette: {
         primary: {
             main: "#1DA1F2"
@@ -18,7 +19,8 @@ const materialUiTheme = createTheme({
 
         text: {
             primary: "white"
-        }
+        },
+        mode: "dark"
     }
 })
 

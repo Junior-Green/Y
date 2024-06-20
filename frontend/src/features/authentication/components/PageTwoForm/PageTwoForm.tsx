@@ -7,7 +7,9 @@ import { IoEyeOutline } from "react-icons/io5";
 
 const PageTwoForm = ({ onSubmit }: PageFormProps<PageTwoInputs>) => {
     const [showPassword, setShowPassword] = useState(false)
-    const { control, handleSubmit, formState: { errors, isValid } } = useForm<PageTwoInputs>({ mode: "onChange" })
+    const { control, handleSubmit, formState: { errors, isValid } } = useForm<PageTwoInputs>({ mode: "onChange", defaultValues: {
+        password: ""
+    }})
 
     return (
         <div className="w-full h-full flex flex-col">
@@ -40,7 +42,7 @@ const PageTwoForm = ({ onSubmit }: PageFormProps<PageTwoInputs>) => {
                                 },
                                 minLength: {
                                     value: 8,
-                                    message: "Password mapping must be at least 8 characters"
+                                    message: "Password must be at least 8 characters"
                                 },
                             }
                         }

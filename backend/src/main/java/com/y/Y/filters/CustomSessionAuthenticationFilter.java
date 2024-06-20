@@ -21,6 +21,7 @@ import java.util.UUID;
 import static com.y.Y.utils.UtilityService.extractSessionCookieFromRequest;
 
 public class CustomSessionAuthenticationFilter extends OncePerRequestFilter {
+
     final private AuthenticationManager authenticationManager;
 
     public CustomSessionAuthenticationFilter(AuthenticationManager authenticationManager) {
@@ -41,10 +42,8 @@ public class CustomSessionAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected boolean shouldNotFilter(@NotNull HttpServletRequest request) {
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         final List<String> urls = Arrays.asList(SecurityConfiguration.PUBLIC_URLS);
         return urls.contains(request.getServletPath());
     }
-
-
 }

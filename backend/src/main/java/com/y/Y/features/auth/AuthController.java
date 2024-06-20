@@ -18,9 +18,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 import java.util.UUID;
 
 @RestController
+@CrossOrigin(originPatterns = "http://localhost:5173")
 @RequestMapping(path = "/api/auth")
 public class AuthController {
 
@@ -53,7 +56,7 @@ public class AuthController {
     }
 
     @PostMapping(path = "/login")
-    public ResponseEntity<String> login(@RequestBody() LoginRequest credentials, HttpServletResponse response)
+    public ResponseEntity<HttpStatus> login(@RequestBody() LoginRequest credentials, HttpServletResponse response)
     {
         String username = credentials.getUsername();
         String password = credentials.getPassword();
@@ -66,15 +69,16 @@ public class AuthController {
 
         Cookie sessionCookie = new Cookie("session", newSessionId.toString());
         sessionCookie.setHttpOnly(true);
+        sessionCookie.setAttribute("SameSite","None");
         sessionCookie.setMaxAge(Session.SESSION_EXPIRATION_SECONDS);
 
         response.addCookie(sessionCookie);
 
-        return ResponseEntity.ok("Successfully logged in");
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @PostMapping(path = "/logout")
-    public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response)
+    public ResponseEntity<HttpStatus> logout(HttpServletRequest request, HttpServletResponse response)
     {
         Cookie[] cookies = request.getCookies();
 
@@ -84,8 +88,9 @@ public class AuthController {
                 Cookie sessionCookie = new Cookie("session",null);
                 sessionCookie.setHttpOnly(true);
                 sessionCookie.setMaxAge(0);
+                sessionCookie.setAttribute("SameSite","None");
                 response.addCookie(sessionCookie);
-                return ResponseEntity.ok("Successfully logged out");
+                return ResponseEntity.ok(HttpStatus.OK);
             }
         }
 

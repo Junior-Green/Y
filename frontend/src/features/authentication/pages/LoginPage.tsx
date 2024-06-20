@@ -1,16 +1,22 @@
 import { useEffect, useState } from "react";
-import PopUpModal from "../../../components/PopUpModal/PopUpModal";
 import LoginPageLanding from "../components/LoginPageLanding/LoginPageLanding";
-import CreateAccountModalPage from "../components/CreateAccountModalPage/CreateAccountModalPage";
-import SignInModalPage from "../components/SignInModalPage/SignInModalPage";
+import SignInModal from "../components/SignInModal/SignInModal";
+import CreateAccountModal from "../components/CreateAccountModal/CreateAccountModal";
+import { useUser } from "@/hooks/hooks";
+import { useNavigate } from "react-router-dom";
 
 function LoginPage() {
+    const navigate = useNavigate()
     const [isSignInModalOpen, setIsSignInModalOpen] = useState(false)
     const [isCreateAccountModalOpen, setIsCreateAccountModalOpen] = useState(false)
+    const { user } = useUser()
 
     useEffect(() => {
+        if (user) {
+            navigate("/home")
+        }
         document.title = "Y. It's what's happening / Y"
-    }, [])
+    }, [user])
 
     const handleCreateAccount = () => {
         setIsCreateAccountModalOpen(true);
@@ -20,14 +26,18 @@ function LoginPage() {
         setIsSignInModalOpen(true);
     }
 
+    const handleOnCreateAccountModalClose = () => {
+        setIsCreateAccountModalOpen(false);
+    }
+
+    const handleSignInModalClose = () => {
+        setIsSignInModalOpen(false);
+    }
+
     return (
         <>
-            <PopUpModal isOpen={isCreateAccountModalOpen} setIsOpen={setIsCreateAccountModalOpen}>
-                <CreateAccountModalPage></CreateAccountModalPage>
-            </PopUpModal>
-            <PopUpModal isOpen={isSignInModalOpen} setIsOpen={setIsSignInModalOpen}>
-                <SignInModalPage></SignInModalPage>
-            </PopUpModal>
+            {isCreateAccountModalOpen && <CreateAccountModal onClose={handleOnCreateAccountModalClose} />}
+            {isSignInModalOpen && <SignInModal onClose={handleSignInModalClose} onSignUp={handleCreateAccount} />}
             <LoginPageLanding onCreateAccount={handleCreateAccount} onSignIn={handleSignIn}></LoginPageLanding>
         </>
     )

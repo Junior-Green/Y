@@ -1,15 +1,17 @@
 import { Controller, useForm } from "react-hook-form";
 import { PageFormProps, PageOneInputs } from "../../utils/types";
 import { useQuery } from "@tanstack/react-query";
-import { getTimeNow } from "@/utils/api";
+import { getTimeNow, getUserProfile } from "@/utils/api";
 import { monthsOfYear, daysOfMonth } from "@/utils/constants";
 import { isValidEmail, isValidPhoneNumber, isValidateDate } from "@/utils/helpers";
 import { FilledInputProps, MenuItem, SelectProps } from "@mui/material";
 import FormInputField from "../FormTextField/FormTextField";
 import { useState } from "react";
 import { FaAngleDown } from "react-icons/fa6";
+import debounce from "lodash.debounce";
 
 const selectProps: Partial<SelectProps> = {
+    IconComponent: () => null,
     MenuProps: {
         slotProps: {
             paper: {
@@ -40,7 +42,29 @@ const dateFormFieldInputProps: Partial<FilledInputProps> | undefined = {
 
 const PageOneForm = ({ onSubmit }: PageFormProps<PageOneInputs>) => {
     const [usingEmail, setUseEmail] = useState(true);
-    const { control, handleSubmit, formState: { errors, isValid }, resetField } = useForm<PageOneInputs>({ mode: "onChange" })
+    const { control, handleSubmit, formState: { errors, isValid }, resetField } = useForm<PageOneInputs>({
+        mode: "onChange", defaultValues: {
+            displayName: "",
+            emailOrPhone: "",
+            birthDay: 1,
+            birthMonth: 0,
+            birthYear: 2000,
+        }
+    })
+    const [isEmailOrPhoneAvailable, setIsEmailOrPhoneAvailable] = useState<boolean>()
+
+    const isEmailOrPhoneAvailableDebounced = debounce(async (data: string, type: "email" | "phone"): Promise<boolean> => {
+        try {
+            const user = await getUserProfile(type, data)
+            setIsEmailOrPhoneAvailable(user === null)
+            return user === null
+        }
+        catch (err) {
+            setIsEmailOrPhoneAvailable(true)
+            return true
+        }
+    }, 300, { leading: true })
+
 
     const { data: queryData } = useQuery({
         queryKey: ['date', 'now'],
@@ -108,7 +132,8 @@ const PageOneForm = ({ onSubmit }: PageFormProps<PageOneInputs>) => {
                                             return isValidPhoneNumber(value) || 'Please enter a valid phone number';
                                         }
 
-                                    }
+                                    },
+                                    isAvailable: async (data) => (await isEmailOrPhoneAvailableDebounced(data, usingEmail ? "email" : "phone") && isEmailOrPhoneAvailable) || "Email or phone already associated with an account"
                                 }
                             }
                         }
