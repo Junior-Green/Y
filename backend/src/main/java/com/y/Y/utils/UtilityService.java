@@ -7,7 +7,6 @@ import com.y.Y.error.custom_exceptions.MissingCookieException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -45,7 +44,11 @@ public final class UtilityService {
         return sessionCookie;
     }
 
-    public static boolean hasHashtag(String text) {
+    public static boolean hasHashtag(String text) throws IllegalArgumentException {
+        if(text == null){
+            throw new IllegalArgumentException("Method requires a non null string to be passed");
+        }
+
         Pattern pattern = Pattern.compile("#\\w+");
         Matcher matcher = pattern.matcher(text);
         return matcher.find();
