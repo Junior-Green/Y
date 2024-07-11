@@ -33,7 +33,7 @@ const SignInModalPage = ({ onClose, onSignUp }: SignInModalProps) => {
         mutationFn: login,
         onSuccess: () => navigate("/home"),
         onError: () => {
-            
+            setError(true)
         }
     })
 
@@ -44,6 +44,7 @@ const SignInModalPage = ({ onClose, onSignUp }: SignInModalProps) => {
 
     const handleErrorOnClose = () => {
         setError(false)
+        onClose()
     }
 
     const handleSignUp = () => {
@@ -112,7 +113,7 @@ const SignInModalPage = ({ onClose, onSignUp }: SignInModalProps) => {
                                     }
                                 }
                             />
-                            <span className="hover:underline hover:cursor-default text-y-accent-blue text-sm" onClick={handleSignUp}>Forgot password?</span>
+                            <span className="hover:underline hover:cursor-default text-y-accent-blue text-sm" >Forgot password?</span>
 
                         </div>
                         {!formSubmitted &&

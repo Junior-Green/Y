@@ -1,6 +1,6 @@
 import { useUser } from "@/hooks/hooks";
-import React from "react";
-import { redirect } from "react-router-dom";
+import React, { useEffect } from "react";
+import { redirect, useNavigate } from "react-router-dom";
 
 interface AuthenticatedRouteProps {
     children: React.ReactNode
@@ -8,10 +8,14 @@ interface AuthenticatedRouteProps {
 
 export default function AuthenticatedRoute({ children }: AuthenticatedRouteProps) {
     const { user, error, isLoading } = useUser()
-
-    if (error || !user) {
-        redirect("/")
-    }
+    const navigate = useNavigate()
+    
+    useEffect(() => {
+        
+        if (error || !user) {
+            navigate("/") 
+        }
+    }, [isLoading, error, user])
 
     return (
         <>
