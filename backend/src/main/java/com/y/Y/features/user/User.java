@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.y.Y.error.custom_exceptions.DuplicateDataException;
 import com.y.Y.features.auth.Auth;
+import com.y.Y.features.post.Post;
 import com.y.Y.features.user.user_details.CustomUserDetails;
 import com.y.Y.features.user.user_profile.UserProfile;
 import jakarta.persistence.*;
@@ -86,6 +87,14 @@ public class User implements CustomUserDetails{
             inverseJoinColumns = @JoinColumn(name = "following_id")
     )
     private Set<User> following = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "bookmarks",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "post_id")
+    )
+    private Set<Post> bookmarkedPosts = new HashSet<>();
 
     public User() {}
 
@@ -253,6 +262,18 @@ public class User implements CustomUserDetails{
         if (followers == null) {followers = new HashSet<>();}
         if (followers.contains(newFollower)) throw new DuplicateDataException(HttpStatus.BAD_REQUEST, DuplicateDataException.DataType.USER);
         followers.add(newFollower);
+    }
+
+    public void bookmarkPost(Post post) {
+        if (bookmarkedPosts == null) {bookmarkedPosts = new HashSet<>();}
+        if (bookmarkedPosts.contains(post)) throw new DuplicateDataException(HttpStatus.BAD_REQUEST, DuplicateDataException.DataType.USER);
+        bookmarkedPosts.add(post);
+    }
+
+    public void unBookmarkPost(Post post) {
+        if(bookmarkedPosts == null || bookmarkedPosts.isEmpty()) return;
+        if(bookmarkedPosts.contains(post)) throw new NoSuchElementException("Cannot unfollow post. Post: " + post.getId() + " has not been bookmarked.");
+        bookmarkedPosts.remove(post);
     }
 
     public void removeFollower(User follower){

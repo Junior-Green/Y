@@ -2,6 +2,8 @@ package com.y.Y.features.user;
 import com.y.Y.error.custom_exceptions.BadRequestException;
 import com.y.Y.error.custom_exceptions.DuplicateDataException;
 import com.y.Y.features.auth.AuthService;
+import com.y.Y.features.post.Post;
+import com.y.Y.features.post.PostService;
 import org.springframework.http.HttpStatus;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -18,11 +20,13 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final AuthService authService;
+    private final PostService postService;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, AuthService authService) {
+    public UserServiceImpl(UserRepository userRepository, AuthService authService, PostService postService) {
         this.userRepository = userRepository;
         this.authService = authService;
+        this.postService = postService;
     }
 
     @Override
@@ -221,5 +225,23 @@ public class UserServiceImpl implements UserService {
         else {
             throw new EntityNotFoundException("No user found with email: " + email);
         }
+    }
+
+    @Override
+    public void bookmarkPost(UUID bookmarker, UUID postId) {
+        User user = userRepository.findById(bookmarker).orElseThrow();
+        Post post = postService.getPostById(postId);
+
+        user.bookmarkPost(post);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void unBookmarkPost(UUID bookmarker, UUID postId) {
+        User user = userRepository.findById(bookmarker).orElseThrow();
+        Post post = postService.getPostById(postId);
+
+        user.unBookmarkPost(post);
+        userRepository.save(user);
     }
 }

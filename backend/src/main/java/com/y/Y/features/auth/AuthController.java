@@ -66,11 +66,7 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authenticated);
 
         UUID newSessionId = sessionService.createNewSession((UUID) authenticated.getPrincipal());
-
-        Cookie sessionCookie = new Cookie("session", newSessionId.toString());
-        sessionCookie.setHttpOnly(true);
-        sessionCookie.setAttribute("SameSite","None");
-        sessionCookie.setMaxAge(Session.SESSION_EXPIRATION_SECONDS);
+        Cookie sessionCookie = sessionService.createNewSessionCookie(newSessionId);
 
         response.addCookie(sessionCookie);
 
@@ -85,11 +81,9 @@ public class AuthController {
         for (Cookie cookie : cookies){
             if(cookie.getName().equals("session")){
                 sessionService.deleteSession(UUID.fromString(cookie.getValue()));
-                Cookie sessionCookie = new Cookie("session",null);
-                sessionCookie.setHttpOnly(true);
-                sessionCookie.setMaxAge(0);
-                sessionCookie.setAttribute("SameSite","None");
+                Cookie sessionCookie = sessionService.createExpiredSessionCookie();
                 response.addCookie(sessionCookie);
+
                 return ResponseEntity.ok(HttpStatus.OK);
             }
         }

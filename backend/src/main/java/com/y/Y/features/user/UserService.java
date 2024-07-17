@@ -17,6 +17,9 @@ public interface UserService {
 
     User getUserByEmail(String username);
 
+    void bookmarkPost(UUID bookmarkerId, UUID postId);
+
+    void unBookmarkPost(UUID bookmarkerId, UUID postId);
 
     User getUserByPhoneNumber(String phoneNumber);
 

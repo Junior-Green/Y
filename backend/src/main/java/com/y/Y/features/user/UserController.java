@@ -38,7 +38,6 @@ public class UserController {
     @GetMapping(path = "/me")
     public ResponseEntity<User> getAuthenticatedUser(){
         Authentication authenticatedUser = SecurityContextHolder.getContext().getAuthentication();
-
         return ResponseEntity.ok(userService.getUserById((UUID) authenticatedUser.getPrincipal()));
     }
 
@@ -78,6 +77,14 @@ public class UserController {
     @PostMapping(path = "/follow/{id}")
     public ResponseEntity<HttpStatus> followUser(@PathVariable("id") UUID id){
         Authentication authenticatedUser = SecurityContextHolder.getContext().getAuthentication();
+        userService.followUsers((UUID) authenticatedUser.getPrincipal(), Collections.singleton(id));
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @PostMapping(path = "/bookmark/{id}")
+    public ResponseEntity<HttpStatus> bookmarkPost(@PathVariable("id") UUID id){
+        Authentication authenticatedUser = SecurityContextHolder.getContext().getAuthentication();
+
         userService.followUsers((UUID) authenticatedUser.getPrincipal(), Collections.singleton(id));
         return ResponseEntity.ok(HttpStatus.OK);
     }

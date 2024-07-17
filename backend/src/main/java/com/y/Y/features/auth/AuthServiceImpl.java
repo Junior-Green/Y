@@ -4,8 +4,10 @@ import com.y.Y.error.custom_exceptions.StringLengthExceededException;
 import com.y.Y.features.user.User;
 import com.y.Y.features.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.Cookie;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,7 +17,6 @@ import java.util.UUID;
 
 @Service
 public class AuthServiceImpl implements AuthService{
-
     static final int MAX_PASSWORD_LENGTH = 32;
 
     private final AuthRepository authRepository;

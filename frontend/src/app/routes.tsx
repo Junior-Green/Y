@@ -11,7 +11,6 @@ function AppRouter() {
         <Routes>
             <Route path="/" element={<LoginPage />}></Route>
             <Route element={<RootLayout />} loader>
-
                 <Route path="/home" element={<AuthenticatedRoute><></></AuthenticatedRoute>}></Route>
                 <Route path="/:user"></Route>
                 <Route path="/post/:postId"></Route>
