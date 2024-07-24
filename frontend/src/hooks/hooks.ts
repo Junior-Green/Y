@@ -7,7 +7,6 @@ export const useUser = () => {
         queryFn: getAuthenticatedUser,
         staleTime: 1000 * 60 * 60,
         retry: 3,
-        placeholderData: undefined
     })
 
     return { user: data, isLoading, error };

@@ -12,7 +12,8 @@ function LoginPage() {
     const { user } = useUser()
 
     useEffect(() => {
-        if (user) {
+        console.log(user)
+        if (user !== undefined) {
             navigate("/home")
         }
         document.title = "Y. It's what's happening / Y"

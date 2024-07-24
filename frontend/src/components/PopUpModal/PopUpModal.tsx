@@ -37,7 +37,7 @@ const PopUpModal = ({ onClose, children, showCloseButton = true, showLogo = true
                     </button>
                 </div>
             }
-            <div className='w-full h-full px-[12%] py-4'>
+            <div className='w-full h-full px-6 pt-12 pb-5'>
                 {children}
             </div>
         </div>

@@ -1,3 +1,4 @@
+import { getAuthenticatedUser } from "@/utils/api";
 import { ThemeProvider, createTheme } from "@mui/material";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -6,6 +7,10 @@ interface AppProviderProps {
 }
 
 const queryClient = new QueryClient()
+queryClient.prefetchQuery({
+    queryKey: ['user', 'authenticated', 'GET'],
+    queryFn: getAuthenticatedUser,
+})
 
 const materialUiTheme = createTheme({
 

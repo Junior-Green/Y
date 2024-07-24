@@ -1,4 +1,4 @@
-import ExploreSideBar from "@/components/ExporeSideBar";
+import ExploreSideBar from "@/components/ExploreSideBar";
 import NavigationSideBar from "@/components/NavigationSideBar";
 import { Outlet } from "react-router-dom";
 

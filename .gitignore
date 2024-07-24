@@ -2,3 +2,4 @@ docker-compose.yml
 target
 *.idea
 *.pem
+**/mock_data/

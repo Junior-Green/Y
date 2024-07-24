@@ -6,8 +6,7 @@ export async function GET(endpoint: string): Promise<any> {
         method: "get",
         withCredentials: import.meta.env.DEV,
         responseType: 'json',
-    }).then(({ data }) => data)
-        .catch((err) => err)
+    })
 }
 
 export async function POST(endpoint: string, body: any): Promise<any> {
@@ -20,8 +19,7 @@ export async function POST(endpoint: string, body: any): Promise<any> {
         headers: {
             "Content-Type": "application/json"
         }
-    }).then(({ data }) => data)
-        .catch((err) => err)
+    })
 }
 
 export async function PUT(endpoint: string, body: any): Promise<any> {
@@ -34,8 +32,7 @@ export async function PUT(endpoint: string, body: any): Promise<any> {
         headers: {
             "Content-Type": "application/json"
         }
-    }).then(({ data }) => data)
-        .catch((err) => err)
+    })
 }
 
 export async function DELETE(endpoint: string): Promise<any> {
@@ -47,6 +44,5 @@ export async function DELETE(endpoint: string): Promise<any> {
         headers: {
             "Content-Type": "application/json"
         }
-    }).then(({ data }) => data)
-        .catch((err) => err)
+    })
 }

@@ -59,6 +59,7 @@ public class User implements CustomUserDetails{
     private String websiteUrl;
     private String location;
     private String gender;
+
     private String bio;
 
     @OneToOne(mappedBy = "user",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
