@@ -37,6 +37,12 @@ public class PostController {
         return ResponseEntity.ok(postService.getPaginatedPosts(pageNumber));
     }
 
+    @GetMapping("/popular")
+    public ResponseEntity<PaginatedPostRequest> getPaginatedPopularPosts(@RequestParam("page") int pageNumber){
+        if(pageNumber < 0) throw new BadRequestException("request param (page) must be greater than 0", HttpStatus.BAD_REQUEST);
+        return ResponseEntity.ok(postService.getPaginatedPopularPosts(pageNumber));
+    }
+
     @GetMapping("/followers")
     public ResponseEntity<PaginatedPostRequest> getPaginatedFollowersPosts(@RequestParam("page") int pageNumber){
         if(pageNumber < 0) throw new BadRequestException("request param (page) must be greater than 0", HttpStatus.BAD_REQUEST);

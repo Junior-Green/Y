@@ -1,6 +1,6 @@
 import axios from "axios"
 
-export async function GET(endpoint: string): Promise<any> {
+export async function GET(endpoint: string) {
     return axios({
         url: import.meta.env.DEV ? `${import.meta.env.VITE_APP_API_URL}${endpoint}` : endpoint,
         method: "get",
@@ -9,7 +9,7 @@ export async function GET(endpoint: string): Promise<any> {
     })
 }
 
-export async function POST(endpoint: string, body: any): Promise<any> {
+export async function POST(endpoint: string, body: any) {
     return axios({
         url: import.meta.env.DEV ? `${import.meta.env.VITE_APP_API_URL}${endpoint}` : endpoint,
         method: 'post',
@@ -22,7 +22,7 @@ export async function POST(endpoint: string, body: any): Promise<any> {
     })
 }
 
-export async function PUT(endpoint: string, body: any): Promise<any> {
+export async function PUT(endpoint: string, body: any) {
     return axios({
         url: import.meta.env.DEV ? `${import.meta.env.VITE_APP_API_URL}${endpoint}` : endpoint,
         method: "put",
@@ -35,7 +35,7 @@ export async function PUT(endpoint: string, body: any): Promise<any> {
     })
 }
 
-export async function DELETE(endpoint: string): Promise<any> {
+export async function DELETE(endpoint: string) {
     return axios({
         url: import.meta.env.DEV ? `${import.meta.env.VITE_APP_API_URL}${endpoint}` : endpoint,
         method: "delete",

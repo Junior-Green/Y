@@ -27,4 +27,6 @@ public interface PostService {
     PaginatedPostRequest getPaginatedPosts(int pageNumber);
 
     PaginatedPostRequest getPaginatedFollowersPosts(UUID userId, int pageNumber);
+
+    PaginatedPostRequest getPaginatedPopularPosts(int pageNumber);
 }

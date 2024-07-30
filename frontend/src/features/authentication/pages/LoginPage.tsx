@@ -12,7 +12,6 @@ function LoginPage() {
     const { user } = useUser()
 
     useEffect(() => {
-        console.log(user)
         if (user !== undefined) {
             navigate("/home")
         }

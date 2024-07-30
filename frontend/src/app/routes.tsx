@@ -1,5 +1,6 @@
 import AuthenticatedRoute from "@/components/AuthenticatedRoute";
 import LoginPage from "@/features/authentication/pages/LoginPage";
+import Home from "@/features/home/pages/Home";
 import NotFound from "@/features/not-found/pages/NotFound";
 import RootLayout from "@/layouts/RootLayout";
 import { Route, Routes } from "react-router-dom";
@@ -11,7 +12,7 @@ function AppRouter() {
         <Routes>
             <Route path="/" element={<LoginPage />}></Route>
             <Route element={<RootLayout />} loader>
-                <Route path="/home" element={<AuthenticatedRoute><></></AuthenticatedRoute>}></Route>
+                <Route path="/home" element={<AuthenticatedRoute><Home /></AuthenticatedRoute>}></Route>
                 <Route path="/:user"></Route>
                 <Route path="/post/:postId"></Route>
                 <Route path="/explore"></Route>

@@ -44,7 +44,7 @@ public class Post {
     @Column(nullable = false, updatable = false)
     private boolean isQoutePost = false;
 
-    @OneToMany(mappedBy = "likedPost",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "likedPost",fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Like> likes;
 
     public Post() {}

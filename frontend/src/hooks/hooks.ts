@@ -5,7 +5,7 @@ export const useUser = () => {
     const { data, isLoading, error } = useQuery({
         queryKey: ['user', 'authenticated', 'GET'],
         queryFn: getAuthenticatedUser,
-        staleTime: 1000 * 60 * 60,
+        staleTime: 0,
         retry: 3,
     })
 

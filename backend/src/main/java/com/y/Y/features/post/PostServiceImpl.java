@@ -9,6 +9,7 @@ import com.y.Y.features.like.LikeRepository;
 import com.y.Y.features.post.controller_requests.PaginatedPostRequest;
 import com.y.Y.features.user.User;
 import com.y.Y.features.user.UserRepository;
+import com.y.Y.utils.PostWithLikesCount;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.Query;
@@ -243,6 +244,31 @@ public class PostServiceImpl implements PostService{
 
 
         req.setPosts(page.getContent());
+        return req;
+    }
+
+    @Override
+    public PaginatedPostRequest getPaginatedPopularPosts(int pageNumber) {
+        PageRequest pageRequest =  PageRequest.of(pageNumber,PAGE_SIZE);
+        Page<PostWithLikesCount> page = postRepository.findAllWithLikesCountOrderByCountDesc(pageRequest);
+
+        PaginatedPostRequest req = new PaginatedPostRequest();
+        if(pageNumber == MAX_PAGES || !page.hasNext()){
+            req.setNextPage(null);
+        }
+        else {
+            req.setNextPage(pageNumber + 1);
+        }
+
+        if(pageNumber - 1 < 1 || !page.hasPrevious()){
+            req.setPreviousPage(null);
+        }
+        else{
+            req.setPreviousPage(pageNumber - 1);
+        }
+
+
+        req.setPosts(page.getContent().stream().map(PostWithLikesCount::getP).toList());
         return req;
     }
 

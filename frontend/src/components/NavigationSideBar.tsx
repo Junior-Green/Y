@@ -88,7 +88,7 @@ const NavigationSideBar = () => {
                         )
                     })}
                 </ul>
-                <button className="bg-y-accent-blue rounded-full text-white font-semibold text-lg p-3 w-[225px] mt-2 transition-colors hover:bg-opacity-85">Post</button>
+                <button className="bg-y-accent-blue rounded-full text-white font-semibold text-lg p-3 md:w-[225px] mt-2 transition-colors hover:bg-opacity-85">Post</button>
                 <div className="w-[275px] mt-auto flex items-center transition-colors hover:bg-gray-500 hover:bg-opacity-20 rounded-full p-3 hover:cursor-pointer" onClick={expandProfileOptions}>
                     <img src={avatar} className="rounded-full" width={40}></img>
                     <div className="ml-3 flex flex-col w-full overflow-hidden overflow-ellipsis">

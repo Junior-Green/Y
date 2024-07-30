@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler } from "react-hook-form";
 import { PageOneInputs, PageThreeInputs, PageTwoInputs } from "@/features/authentication/utils/types";
 import PageOneForm from "../PageOneForm/PageOneForm";
 import PageTwoForm from "../PageTwoForm/PageTwoForm";
@@ -20,7 +20,6 @@ interface CreateAccountModalProps {
 const CreateAccountModal = ({ onClose }: CreateAccountModalProps) => {
     const [isFormSubmitted, setIsFormSubmitted] = useState(false)
     const [pageNumber, setPageNumber] = useState<1 | 2 | 3>(1);
-    const [username, setUsername] = useState<string>()
     const [email, setEmail] = useState<string>()
     const [phoneNumber, setPhoneNumber] = useState<string>()
     const [displayName, setDisplayName] = useState<string>()
@@ -33,7 +32,6 @@ const CreateAccountModal = ({ onClose }: CreateAccountModalProps) => {
     const { mutate: createUser } = useMutation({
         mutationFn: createNewUser,
         onSuccess: (user, { password }) => {
-            console.log("3")
             loginFunc({ username: user.username, password: password })
         },
         onError: (e) => {
@@ -47,7 +45,8 @@ const CreateAccountModal = ({ onClose }: CreateAccountModalProps) => {
         onSuccess: () => {
             navigate("/home")
         },
-        onError: () => {
+        onError: (e) => {
+            console.log(e)
             setError(true)
         }
     })

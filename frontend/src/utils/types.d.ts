@@ -7,7 +7,7 @@ export type AppDispatch = typeof store.dispatch
 export type Page<T> = {
     data: Array<T> | null,
     nextPage: number | null,
-    previosPage: number | null,
+    previousPage: number | null,
 }
 
 

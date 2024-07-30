@@ -131,3 +131,12 @@ create table session (
             foreign key(user_id) 
             references "user"
     );
+
+create view post_summary_view as
+    select
+    post_id as post_id,
+    count(*) as likes_count,
+    max(created) as last_like_date,
+    min(created) as first_like_date
+from likes
+group by likes.post_id;
