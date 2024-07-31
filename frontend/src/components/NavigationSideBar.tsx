@@ -4,6 +4,7 @@ import { IoSearchOutline } from "react-icons/io5";
 import React, { useEffect, useMemo, useState } from "react";
 import { BsPerson } from "react-icons/bs";
 import { FiSettings } from "react-icons/fi";
+import { TbPencilPlus } from "react-icons/tb";
 import { FaRegBookmark } from "react-icons/fa6";
 import { useLocation, useNavigate } from "react-router-dom";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
@@ -71,7 +72,7 @@ const NavigationSideBar = () => {
 
     return (
         <>
-            <div className="w-min h-full flex-col flex py-4 px-3 md:ml-auto ml-0">
+            <div className="w-min h-full flex-col flex py-4 px-2 md:px-3 md:ml-auto ml-0">
                 <div className="w-min flex items-center transition-colors hover:bg-gray-500 hover:bg-opacity-20 rounded-full p-3 hover:cursor-pointer" onClick={() => navigate("/home")}>
                     <Logo widthValue={25} widthUnit={"px"} hexColor={"#ffffff"}></Logo>
                 </div>
@@ -88,14 +89,17 @@ const NavigationSideBar = () => {
                         )
                     })}
                 </ul>
-                <button className="bg-y-accent-blue rounded-full text-white font-semibold text-lg p-3 md:w-[225px] mt-2 transition-colors hover:bg-opacity-85">Post</button>
-                <div className="w-[275px] mt-auto flex items-center transition-colors hover:bg-gray-500 hover:bg-opacity-20 rounded-full p-3 hover:cursor-pointer" onClick={expandProfileOptions}>
+                <button className="bg-y-accent-blue w-min rounded-full p-4 md:p-3 md:w-[225px] mt-2 transition-colors hover:bg-opacity-85 self-center md:self-start">
+                    <span className="hidden md:block text-white font-semibold text-lg ">Post</span>
+                    <TbPencilPlus className="block md:hidden" size={25}/>
+                </button>
+                <div className="w-auto md:w-[275px] mt-auto flex justify-center items-center transition-colors hover:bg-gray-500 hover:bg-opacity-20 rounded-full p-3 hover:cursor-pointer" onClick={expandProfileOptions}>
                     <img src={avatar} className="rounded-full" width={40}></img>
-                    <div className="ml-3 flex flex-col w-full overflow-hidden overflow-ellipsis">
+                    <div className="ml-3 hidden flex-col w-full overflow-hidden overflow-ellipsis md:flex">
                         <span className="text-white font-bold leading-tight">{user?.displayName}</span>
                         <span className="text-y-gray-300">{`@${user?.username}`}</span>
                     </div>
-                    <HiOutlineDotsHorizontal className="ml-auto" size={30} />
+                    <HiOutlineDotsHorizontal className="ml-auto hidden md:block" size={30} />
                 </div>
             </div>
             {logoutModalShowing && <LogoutModal onClose={onLogoutModalClose} />}
