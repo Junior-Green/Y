@@ -1,74 +1,79 @@
-package com.y.Y.features.user.user_profile;
+package com.y.Y.features.user;
 
-import com.y.Y.features.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
-public final class UserProfileImpl implements UserProfile {
-    private User user;
+public final class UserDto {
+    private final User user;
+    private UserSummaryViewDto summary;
 
-    public UserProfileImpl(User user) {
+    public UserDto(User user, UserSummaryViewDto summary) {
+        this.user = user;
+        this.summary = summary;
+    }
+
+    public UserDto(User user) {
         this.user = user;
     }
 
-    public UserProfileImpl() {
-    }
-
-    @Override
     public UUID getId() {
         return user.getId();
     }
 
-    @Override
     public String getUsername() {
         return user.getUsername();
     }
 
-    @Override
     public String getLocation() {
         return user.getLocation();
     }
-
-    @Override
+    
     public LocalDate getBirthday() {
         return user.getBirthday();
     }
-
-    @Override
+    
     public String getDisplayName() {
         return user.getDisplayName();
     }
 
-    @Override
     public LocalDateTime getAccountCreation() {
         return user.getAccountCreation();
     }
 
-    @Override
     public String getBio() {
         return user.getBio();
     }
 
-    @Override
     public String getWebsiteUrl() {
         return user.getWebsiteUrl();
     }
 
-    @Override
+    public Integer getBlockedCount() {return summary.getBLOCKED_COUNT();}
+
+    public Integer getFollowerCount() {return summary.getFOLLOWER_COUNT();}
+
+    public Integer getFollowingCount() {return summary.getFOLLOWING_COUNT();}
+
+    public Integer getBookmarkCount() {return summary.getBOOKMARK_COUNT();}
+
+    public boolean isVerified() {
+        return user.isVerified();
+    }
+
+    @JsonIgnore
+    public Set<UUID> getBookmarks() {return user.getBookmarkedPostIds();}
+
+    @JsonIgnore
     public Set<UUID> getFollowersIds() {
         return user.getFollowersIds();
     }
 
-    @Override
+    @JsonIgnore
     public Set<UUID> getFollowingIds() {
         return user.getFollowingIds();
-    }
-
-    @Override
-    public boolean isVerified() {
-        return user.isVerified();
     }
 }

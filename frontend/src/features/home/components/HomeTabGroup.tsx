@@ -21,7 +21,7 @@ const HomeTabGroup = ({ labelNames, onChange }: HomeTabGroupProps) => {
     return (
         <>
             {labelNames.map((label, i) => {
-                return <div className="w-full h-full bg-black/30 backdrop-blur-md" onClick={() => onTabSelected(i)}><HomeTab tabName={label} focused={i === selectedIndex} /></div>
+                return <div key={i} className="w-full h-full bg-black/50 backdrop-blur-md" onClick={() => onTabSelected(i)}><HomeTab tabName={label} focused={i === selectedIndex} /></div>
             })}
         </>
     )

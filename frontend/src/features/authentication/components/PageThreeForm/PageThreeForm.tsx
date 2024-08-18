@@ -16,7 +16,7 @@ const PageThreeForm = ({ onSubmit }: PageFormProps<PageThreeInputs>) => {
 
     const IsUsernameAvailableDebounced = debounce(async (username: string): Promise<boolean> => {
         try {
-            const user = await getUserProfile("username", username)
+            const user = await getUserProfile({identifier: "username", value: username})
             setIsUsernameAvailable(user === null)
             return user === null
         }
@@ -27,7 +27,7 @@ const PageThreeForm = ({ onSubmit }: PageFormProps<PageThreeInputs>) => {
     }, 300, { leading: true })
 
     return (
-        <div className="w-full h-full flex flex-col">
+        <div className="w-full h-full flex flex-col p-5">
             <h1 className="text-white text-3xl font-bold">What should we call you?</h1>
             <h2 className="mt-1 text-y-gray-300">Your @username is unique. You can always change it later.</h2>
 

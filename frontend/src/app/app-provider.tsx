@@ -21,7 +21,6 @@ const materialUiTheme = createTheme({
         secondary: {
             main: "#333639"
         },
-
         text: {
             primary: "white"
         },

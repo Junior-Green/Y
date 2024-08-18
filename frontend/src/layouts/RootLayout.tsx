@@ -5,14 +5,14 @@ import { Outlet } from "react-router-dom";
 function RootLayout() {
 
     return (
-        <div className="w-full h-full flex">
-            <section className="w-auto md:w-1/3">
+        <div className="w-full h-auto flex relative">
+            <section className="w-auto h-screen md:w-1/3 sticky top-0">
                 <NavigationSideBar />
             </section>
-            <section className="w-full md:max-w-[600px] md:min-w-[600px] border-x-[1px] border-x-y-gray-400 overflow-y-scroll" >
+            <section className="w-full h-auto md:max-w-[600px] border-x-[1px] border-x-y-gray-400" >
                 <Outlet></Outlet>
             </section>
-            <section className="w-0 md:min-w-[600px] ">
+            <section className=" h-screen sticky top-0">
                 <ExploreSideBar />
             </section>
         </div>)

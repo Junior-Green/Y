@@ -39,7 +39,7 @@ const LogoutModal = ({ onClose }: LogoutModalProps) => {
     return (
         <>
             <PopUpModal width={320} height={356} onClose={onClose} showLogo={true} showCloseButton={false}>
-                <div className="w-full h-full flex flex-col pt-4">
+                <div className="w-full h-full flex flex-col p-6">
                     <h1 className="w-full text-white font-bold text-xl">Log out of Y?</h1>
                     <p className="text-y-gray-300 leading-tight mt-2">You can always log back in at any time. </p>
                     <button onClick={onLogout} className="mt-auto bg-white text-black p-2 rounded-full hover:bg-opacity-85 transition-colors font-semibold">Log out</button>

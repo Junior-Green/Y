@@ -2,7 +2,7 @@ import { Controller, useForm } from "react-hook-form";
 import { PageFormProps, PageOneInputs } from "../../utils/types";
 import { useQuery } from "@tanstack/react-query";
 import { getTimeNow, getUserProfile } from "@/utils/api";
-import { monthsOfYear, daysOfMonth } from "@/utils/constants";
+import { monthNames, daysOfMonth } from "@/utils/constants";
 import { isValidEmail, isValidPhoneNumber, isValidateDate } from "@/utils/helpers";
 import { FilledInputProps, MenuItem, SelectProps } from "@mui/material";
 import FormInputField from "../FormTextField/FormTextField";
@@ -53,9 +53,9 @@ const PageOneForm = ({ onSubmit }: PageFormProps<PageOneInputs>) => {
     })
     const [isEmailOrPhoneAvailable, setIsEmailOrPhoneAvailable] = useState<boolean>()
 
-    const isEmailOrPhoneAvailableDebounced = debounce(async (data: string, type: "email" | "phone"): Promise<boolean> => {
+    const isEmailOrPhoneAvailableDebounced = debounce(async (value: string, identifier: "email" | "phone"): Promise<boolean> => {
         try {
-            const user = await getUserProfile(type, data)
+            const user = await getUserProfile({ identifier, value })
             setIsEmailOrPhoneAvailable(user === null)
             return user === null
         }
@@ -74,7 +74,7 @@ const PageOneForm = ({ onSubmit }: PageFormProps<PageOneInputs>) => {
     })
 
     return (
-        <div className="w-full h-full flex flex-col">
+        <div className="w-full h-full flex flex-col p-5">
             <h1 className="text-white text-3xl font-bold">Create your account</h1>
 
             <form onSubmit={handleSubmit(onSubmit)} className="h-full flex flex-col">
@@ -165,7 +165,7 @@ const PageOneForm = ({ onSubmit }: PageFormProps<PageOneInputs>) => {
                                     {...field}
                                 >
                                     {
-                                        monthsOfYear.map((month, index) => <MenuItem key={month} value={index}>{month}</MenuItem>)
+                                        monthNames.map((month, index) => <MenuItem key={month} value={index}>{month}</MenuItem>)
                                     }
                                 </FormInputField>}
                                 rules={

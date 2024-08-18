@@ -1,5 +1,6 @@
+import { QueryFunctionContext } from "@tanstack/react-query"
 import { DELETE, GET, POST, PUT } from "./fetch"
-import { Like, LoginCredentials, NewUserRequest, Page, Post, UpdateUserRequest, User, UserProfile } from "./types"
+import { CreateReplyParams, Like, LoginCredentials, NewUserRequest, Page, Post, UpdateUserRequest, User, UserProfile, UserProfileRequest } from "./types"
 
 export const getTimeNow = async (): Promise<Date> => {
     const response = await fetch('https://worldtimeapi.org/api/timezone/America/Toronto')
@@ -9,12 +10,12 @@ export const getTimeNow = async (): Promise<Date> => {
     return date
 }
 
-export const getPaginatedPosts = async (pageNumber: number): Promise<Page<Post>> => {
-    return GET(`/api/posts?page=${pageNumber}`).then((res) => res.data)
+export const getPaginatedPostsByLikes = async ({ pageParam }: QueryFunctionContext): Promise<Page<Post>> => {
+    return GET(`/api/posts/popular?page=${pageParam}`).then((res) => res.data)
 }
 
-export const getPaginatedFollowersPosts = async (pageNumber: number): Promise<Page<Post>> => {
-    return GET(`/api/posts/followers?page=${pageNumber}`).then(res => res.data)
+export const getPaginatedFollowersPosts = async ({ pageParam }: QueryFunctionContext): Promise<Page<Post>> => {
+    return GET(`/api/posts/followers?page=${pageParam}`).then(res => res.data)
 }
 
 export const getPostById = async (postId: string): Promise<Post> => {
@@ -33,7 +34,22 @@ export const getAuthenticatedUser = async (): Promise<User> => {
     return GET(`/api/users/me`).then(res => res.data)
 }
 
-export const getUserProfile = async (identifier: "id" | "email" | "phone" | "username", value: string): Promise<UserProfile> => {
+export const getUserFollowers = async ({ queryKey }: QueryFunctionContext): Promise<String[]> => {
+    const [id, _] = queryKey
+    return GET(`/api/users/${id}/followers`).then(res => res.data)
+}
+
+export const getUserFollowed = async ({ queryKey }: QueryFunctionContext): Promise<String[]> => {
+    const [id, _] = queryKey
+    return GET(`/api/users/${id}/following`).then(res => res.data)
+}
+
+export const getUserProfileFromContext = async ({ queryKey }: QueryFunctionContext): Promise<UserProfile> => {
+    const [_, identifier, value] = queryKey
+    return GET(`/api/users?${identifier}=${value}`).then(res => res.data)
+}
+
+export const getUserProfile = async ({ identifier, value }: UserProfileRequest): Promise<UserProfile> => {
     return GET(`/api/users?${identifier}=${value}`).then(res => res.data)
 }
 
@@ -64,8 +80,8 @@ export const likePost = async (postId: string): Promise<string> => {
     return POST(`/api/posts/like/${postId}`, {}).then(res => res.data)
 }
 
-export const createReply = async (parentPostId: string, content: string): Promise<Post> => {
-    return POST(`/api/posts/${parentPostId}`, content).then(res => res.data)
+export const createReply = async ({ content, parentId }: CreateReplyParams): Promise<Post> => {
+    return POST(`/api/posts/${parentId}`, content).then(res => res.data)
 }
 
 export const deletePost = async (postId: string): Promise<string> => {

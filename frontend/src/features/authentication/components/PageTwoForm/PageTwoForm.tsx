@@ -7,12 +7,14 @@ import { IoEyeOutline } from "react-icons/io5";
 
 const PageTwoForm = ({ onSubmit }: PageFormProps<PageTwoInputs>) => {
     const [showPassword, setShowPassword] = useState(false)
-    const { control, handleSubmit, formState: { errors, isValid } } = useForm<PageTwoInputs>({ mode: "onChange", defaultValues: {
-        password: ""
-    }})
+    const { control, handleSubmit, formState: { errors, isValid } } = useForm<PageTwoInputs>({
+        mode: "onChange", defaultValues: {
+            password: ""
+        }
+    })
 
     return (
-        <div className="w-full h-full flex flex-col">
+        <div className="w-full h-full flex flex-col p-5">
             <h1 className="text-white text-3xl font-bold">You'll need a password</h1>
             <h2 className="mt-1 text-y-gray-300">Make sure it’s 8 characters or more.</h2>
 

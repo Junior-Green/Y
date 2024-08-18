@@ -10,16 +10,18 @@ export type Page<T> = {
     previousPage: number | null,
 }
 
-
 export type Post = {
     id: string,
-    authorId: string,
+    author: UserProfile,
     parentId: string | null,
     content: string,
     createdAt: Date,
-    replyIds: string[],
     isQuotePost: boolean,
-    likes: Like[]
+    replyCount: number | null,
+    quoteCount: number | null,
+    likesCount: number | null,
+    lastLikeDate: Date | null,
+    firstLikeDate: Date | null
 }
 
 export type Like = {
@@ -37,6 +39,7 @@ export type User = {
     email: string | null,
     birthday: Date,
     accountCreation: Date,
+    bookmarks: Post[],
     phoneNumber: string | null,
     displayName: string,
     websiteUrl: string | null,
@@ -44,6 +47,27 @@ export type User = {
     isVerified: boolean,
     gender: string | null,
     bio: string | null,
+}
+
+export type UserProfile = {
+    id: string,
+    username: string
+    displayName: string,
+    location: string | null,
+    websiteUrl: string | null,
+    birthday: Date,
+    isVerified: boolean,
+    bio: string | null,
+    accountCreation: Date,
+    followerCount: number | null,
+    followingCount: number | null,
+    bookmarkCount: number | null,
+    blockedCount: number | null,
+}
+
+export type UserProfileRequest = {
+    identifier: "id" | "email" | "phone" | "username"
+    value: string
 }
 
 export type NewUserRequest = {
@@ -72,18 +96,9 @@ export type UpdateUserRequest = {
     bio?: string,
 }
 
-export type UserProfile = {
-    id: string,
-    username: string
-    displayName: string,
-    location: string | null,
-    websiteUrl: string | null,
-    birthday: Date,
-    verified: boolean,
-    bio: string | null,
-    accountCreation: Date,
-    followersIds: string[],
-    followingIds: string[]
+export type CreateReplyParams = {
+    parentId: string,
+    content: string
 }
 
 export type LoginCredentials = {

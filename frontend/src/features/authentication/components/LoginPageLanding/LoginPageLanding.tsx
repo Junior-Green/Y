@@ -8,7 +8,7 @@ interface LoginPageLandingProps {
 const LoginPageLanding = ({onSignIn, onCreateAccount}: LoginPageLandingProps) => {
 
     return (
-        <div className="w-full h-full flex flex-col items-start md:items-center md:justify-center md:flex-row p-5">
+        <div className="w-full h-screen flex flex-col items-start md:items-center md:justify-center md:flex-row p-5">
             <div className="w-10 md:w-1/2 md:mx-auto  mb-8 block md:flex md:justify-center md:h-1/2 ">
                 <Logo widthValue={100} widthUnit="%" hexColor={"#FFFFFF"}></Logo>
             </div>

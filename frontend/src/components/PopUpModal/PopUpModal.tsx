@@ -9,7 +9,7 @@ interface PopUpModalProps {
     showCloseButton?: boolean,
     showLogo?: boolean
     width: number,
-    height: number
+    height?: number
 }
 
 const PopUpModal = ({ onClose, children, showCloseButton = true, showLogo = true, width, height }: PopUpModalProps) =>
@@ -22,7 +22,7 @@ const PopUpModal = ({ onClose, children, showCloseButton = true, showLogo = true
         shouldCloseOnOverlayClick={false}
         appElement={document.getElementById('root') || undefined}
         className="y-modal">
-        <div className={`bg-black rounded-3xl flex flex-col p-3 relative`} style={{ width: `${width}px`, height: `${height}px` }}>
+        <div className={`bg-black rounded-3xl flex flex-col p-3 relative`} style={{ width: `${width}px`, height: height === undefined ? "auto " : `${height}px` }}>
             {showLogo &&
                 <div className='logo-container'>
                     <Logo widthValue={30} widthUnit={'px'} hexColor={'#ffffff'}>
@@ -37,7 +37,7 @@ const PopUpModal = ({ onClose, children, showCloseButton = true, showLogo = true
                     </button>
                 </div>
             }
-            <div className='w-full h-full p-6'>
+            <div className='w-full h-full mt-6'>
                 {children}
             </div>
         </div>

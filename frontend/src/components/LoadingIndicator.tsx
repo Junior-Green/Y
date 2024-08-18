@@ -3,12 +3,13 @@ import { CircularProgressProps, Box, CircularProgress, circularProgressClasses }
 
 const LoadingIndicator = (props: CircularProgressProps) => {
     return (
-        <Box sx={{ position: 'relative' }}>
+        <Box sx={{ position: 'relative', height: props.size }}>
             <CircularProgress
                 variant="determinate"
                 sx={{
                     color: (theme) =>
                         theme.palette.grey[theme.palette.mode === 'light' ? 200 : 800],
+                    margin: "auto"
                 }}
                 size={40}
                 thickness={4}
@@ -19,8 +20,8 @@ const LoadingIndicator = (props: CircularProgressProps) => {
                 variant="indeterminate"
                 disableShrink
                 sx={{
-                    color: (theme) => (theme.palette.mode === 'light' ? '#1a90ff' : '#308fe8'),
                     animationDuration: '550ms',
+                    margin: "auto",
                     position: 'absolute',
                     left: 0,
                     [`& .${circularProgressClasses.circle}`]: {
